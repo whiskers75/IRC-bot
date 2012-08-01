@@ -47,16 +47,21 @@ botMaster.addListener('pm', function(sender, message) {
   var args = message.split(" ");
   if(message == "init"){
     if(!init) {
-	  init = true;
+      init = true;
       console.log(sender + ": initialising");
       botMaster.say(currentChannel, sender + ": Enabling IRCbot...");
-	  op("IRCbot_Slave", "master");
-	  return;
+      op("IRCbot_Slave", "master");
+      return;
 	} else {
-	  botMaster.send('MSG', 'Already initialised');
+      botMaster.send('MSG', sender, 'Already initialised');
 	}
   }
+  if(message == "shutdown"){
+    stop(sender);
+  }
+  
   if(!init){ return; }
+  
   if(message == "deinit") {
     botMaster.say(currentChannel, sender  + ": disabling IRCbot...");
 	init = false;
@@ -70,9 +75,6 @@ botMaster.addListener('pm', function(sender, message) {
     console.log(sender + ": Opping all slaves");
     op("IRCbot_Slave", "master");
 	return;
-  }
-  if(message == "shutdown"){
-    stop(sender);
   }
   if(startsWith(message, "op ")){
     console.log(sender + ": opping " + args[1]);
@@ -156,12 +158,12 @@ botMaster.addListener('kick', function(channel, nick, by, reason, message) {
 });
 botSlave.addListener('kick', function(channel, nick, by, reason, message) {
   if(nick == "IRCbot_Master") {
-	kick(by, "Disconnected by Admin.", "slave");
-	botSlave.say(channel, by + " has been kicked for kicking IRC bots!");
+	kick(by, "Kicking IRC bots.", "slave");
 	setTimeout(function(){ botSlave.send('MODE', channel, '+o', "IRCbot_Master"); }, 1200);
   }  
 });
-
+botMaster.addListener('message', function(channel, nick, message){
+});
 
 
 
@@ -189,7 +191,7 @@ var startsWith = function (superstr, str) {
 };
 
 var kick = function (player, reason, bot) {
-if(!bot) { var bot = "master"; }
+if(!bot) { bot = "master"; }
 if(!reason) { reason = "Disconnected by admin"; }
 
 if(bot == "master"){
@@ -197,28 +199,55 @@ if(bot == "master"){
 } else {
   botSlave.send('KICK', currentChannel, player, reason);
 }
+botSlave.say(currentChannel, " by + " + "has been kicked for kicking IRC bots!");
+console.log(bot + ": kicking " + player + " for kicking IRC bots!");
 };
 
-var deop = function (player, bot) {
-if(!bot){ var bot = "master"; }
+var deop = function (player, bot, sender) {
+if(!bot){ bot = "master"; }
 if(bot == "master") {
   botMaster.send('MODE', currentChannel, '-o', player);
 } else {
   botSlave.send('MODE', currentChannel, '-o', player);
 }
+console.log(sender + ": kicking " + player);
 };
 
-var op = function (player, bot) {
-if(!bot){ var bot = "master"; }
+var op = function (player, bot, sender) {
+if(!bot){ bot = "master"; }
 if(bot == "master") {
   botMaster.send('MODE', currentChannel, '+o', player);
 } else {
   botSlave.send('MODE', currentChannel, '+o', player);
 }
+console.log(sender + ": opping " + player);
+};
+
+var ban = function (player, reason, bot, sender) {
+if(!bot) { bot = "master"; }
+if(!reason) { reason = "Banned by admin."; }
+if(bot == "master") {
+  botMaster.send('MODE', currentChannel, '+b', player);
+} else {
+  botSlave.send('MODE', currentChannel, '+b', player);
+}
+console.log(sender + ": banning " + player);
+};
+
+var unban = function (player, bot, sender) {
+if(!bot) { bot = "master"; }
+if(bot == "master") {
+  botMaster.send('MODE', currentChannel, '-b', player);
+} else {
+  botSlave.send('MODE', currentChannel, '-b', player);
+}
+console.log(sender + ": unbanning " + player);
 };
 
 var stop = function(sender){
+  botMaster.say(currentChannel, sender  + ": disabling IRCbot...");
   botMaster.disconnect(sender + ": Shutting down...");
   botSlave.disconnect(sender + ": Shutting down...");
+  console.log(sender + ": Shutting down..");
   setTimeout(function(){ process.exit(0); }, 1000);
 };
