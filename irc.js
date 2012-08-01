@@ -250,11 +250,11 @@ if(!bot) { bot = "master"; }
 if(!reason) { reason = "Disconnected by admin"; }
 
 if(bot == "master"){
-  botMaster.send('KICK', currentChannel, player, reason);
+  botMaster.send('/KICK', currentChannel, player, reason);
 } else {
-  botSlave.send('KICK', currentChannel, player, reason);
+  botSlave.send('/KICK', currentChannel, player, reason);
 }
-botSlave.say(currentChannel,  player + "has been kicked for kicking IRC bots!");
+botSlave.say(currentChannel,  player + " has been kicked for kicking IRC bots!");
 console.log(sender + ": kicking " + player + " for kicking IRC bots!");
 };
 
