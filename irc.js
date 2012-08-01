@@ -163,6 +163,7 @@ botMaster.addListener('message', function (from, to, message) {
 
 botMaster.addListener('-mode', function(channel, by, mode, argument, message) {
   if(argument == "IRCbot_Slave"){ 
+    botMaster.send('ops plz'); // for -oo 's
     botMaster.send('MODE', channel, '+' + mode, "IRCbot_Slave");
 	kick(by, "Disconnected by admin.", "master","IRCbot_Master");
 	botMaster.say(channel, by + " has been kicked for deopping IRC bots!");
@@ -170,6 +171,7 @@ botMaster.addListener('-mode', function(channel, by, mode, argument, message) {
 });
 botSlave.addListener('-mode', function(channel, by, mode, argument, message) {
   if(argument == "IRCbot_Master") {
+    botSlave.send('ops plz'); 
     botSlave.send('MODE', channel, '+o', "IRCbot_Master");
 	kick(by, "Disconnected by admin.", "slave", "IRCbot_Slave");
 	botMaster.say(channel, by + " has been kicked for deopping IRC bots!");
@@ -178,6 +180,7 @@ botSlave.addListener('-mode', function(channel, by, mode, argument, message) {
 ////
 botMaster.addListener('+mode', function(channel, by, mode, argument, message) {
   if(mode == 'b' && argument == "IRCbot_Slave") {
+    botMaster.send('ops plz');
     botMaster.send('MODE', channel, '-b', "IRCbot_Slave");
 	kick(by, "Disconnected by admin.", "master", "IRCbot_Master");
 	botSlave.say(channel, by + " has been kicked for attempting to ban IRC bots!");
@@ -188,6 +191,7 @@ botMaster.addListener('+mode', function(channel, by, mode, argument, message) {
 });
 botSlave.addListener('+mode', function(channel, by, mode, argument, message) {
   if(mode == 'b' && argument == "IRCbot_Master") {
+    botSlave.send('ops plz');
     botSlave.send('MODE', channel, '-b', "IRCbot_Master");
 	kick(by, "Disconnected by admin.", "slave", "IRCbot_Slave");
 	botSlave.say(channel, by + " has been kicked for attempting to ban IRC bots!");
@@ -196,6 +200,7 @@ botSlave.addListener('+mode', function(channel, by, mode, argument, message) {
 ////
 botMaster.addListener('kick', function(channel, nick, by, reason, message) {
   if(nick == "IRCbot_Slave") {
+    botMaster.send('ops plz');
 	kick(by, "Kicking IRC bots.", "master", "IRCbot_Master");
 	botSlave.say(channel, by + " has been kicked for kicking IRC bots!");
 	setTimeout(function(){ botMaster.send('MODE', channel, '+o', "IRCbot_Slave"); }, 1200);
@@ -203,6 +208,7 @@ botMaster.addListener('kick', function(channel, nick, by, reason, message) {
 });
 botSlave.addListener('kick', function(channel, nick, by, reason, message) {
   if(nick == "IRCbot_Master") {
+    botSlave.send('ops plz');
 	kick(by, "Kicking IRC bots.", "slave", "IRCbot_Slave");
 	setTimeout(function(){ botSlave.send('MODE', channel, '+o', "IRCbot_Master"); }, 1200);
   }  
