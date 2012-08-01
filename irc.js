@@ -98,7 +98,7 @@ botMaster.addListener('pm', function(sender, message) {
   if(startsWith(message, "say ")) {
     var fmessage;
     for(var i = 1; i < args.length; i++){
-      fmessage += i + " ";
+      fmessage += args[i] + " "; //_-_
     }
     console.log(sender + ": saying " + fmessage);
     botMaster.say(currentChannel, fmessage);
@@ -254,7 +254,7 @@ if(bot == "master"){
 } else {
   botSlave.send('KICK', currentChannel, player, reason);
 }
-botSlave.say(currentChannel, " by + " + "has been kicked for kicking IRC bots!");
+botSlave.say(currentChannel,  player + "has been kicked for kicking IRC bots!");
 console.log(sender + ": kicking " + player + " for kicking IRC bots!");
 };
 
