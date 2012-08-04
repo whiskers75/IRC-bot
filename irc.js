@@ -6,7 +6,7 @@ process.stdin.setEncoding('utf8');
 process.stdin.setRawMode(true);
 */
 
-var currentChannel = '#node-irc-bots';
+var currentChannel = '##node-irc-bots';
 var init = false;
 var admins = ["Bux", "whiskers75"];
 var fs = require("fs");
@@ -173,6 +173,7 @@ botMaster.addListener('join', function(channel, nick, message) {
   } else if(nick == "IRCbot_Slave") {
     botSlave.say('ops plz');
   }
+  setTimeout(function() {
   if(nick == leader) {
     botMaster.say('Welcome, O most glorious and great leader!');
     botMaster.say('Your current nemesis is: ' + nemesis);
@@ -183,6 +184,7 @@ botMaster.addListener('join', function(channel, nick, message) {
     botMaster.say('Your current nemesis is: ' + nemesis);
     op(secondLeader, "master", secondLeader);
   }
+  }, 2400);
 });
 
 botMaster.addListener('message', function (from, to, message) {
