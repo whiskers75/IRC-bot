@@ -104,7 +104,7 @@ botMaster.addListener('pm', function(sender, message) {
   }
   if(startsWith(message, "say ")) {
     var fmessage;
-    for(var i = 2; i < args.length; i++){
+    for(var i = 0; i < args.length; i++){
       fmessage += args[i] + " ";
     }
     console.log(sender + ": saying " + fmessage);
