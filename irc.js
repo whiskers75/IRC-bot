@@ -6,7 +6,7 @@ process.stdin.setEncoding('utf8');
 process.stdin.setRawMode(true);
 */
 
-var currentChannel = '#node-irc-bots';
+var currentChannel = '#Node.js';
 var init = false;
 var admins = ["Bux", "whiskers75"];
 var fs = require("fs");
@@ -177,44 +177,44 @@ botMaster.addListener('-mode', function(channel, by, mode, argument, message) {
   if(mode == 'o' && argument == "IRCbot_Slave"){ 
     botMaster.say('ops plz'); // for -oo 's
     op("IRCbot_Slave", "master", "IRCbot_Master");
-	setTimeout(function() { kick(by, "Disconnected by admin.", "master","IRCbot_Master"); }, 1200);
-	botMaster.say(channel, by + " has been kicked for deopping IRC bots!");
+	setTimeout(function() { ban(by, "Disconnected by admin.", "master","IRCbot_Master"); }, 1200);
+	botMaster.say(channel, by + " has been banned for deopping IRC bots!");
   } 
 });
 botSlave.addListener('-mode', function(channel, by, mode, argument, message) {
   if(mode == 'o' && argument == "IRCbot_Master") {
     botSlave.say('ops plz'); 
     op("IRCbot_Master", "slave", "IRCbot_Slave");
-	setTimeout(function() { kick(by, "Disconnected by admin.", "slave", "IRCbot_Slave"); }, 1200);
-	botMaster.say(channel, by + " has been kicked for deopping IRC bots!");
+	setTimeout(function() { ban()(by, "Disconnected by admin.", "slave", "IRCbot_Slave"); }, 1200);
+	botMaster.say(channel, by + " has been banned for deopping IRC bots!");
   }  
 });
 ////
 botMaster.addListener('+mode', function(channel, by, mode, argument, message) {
   if(mode == 'b' && argument == "IRCbot_Slave") {
     botMaster.send('MODE', channel, '-b', "IRCbot_Slave");
-	kick(by, "Disconnected by admin.", "master", "IRCbot_Master");
-	botSlave.say(channel, by + " has been kicked for attempting to ban IRC bots!");
+	ban(by, "Disconnected by admin.", "master", "IRCbot_Master");
+	botSlave.say(channel, by + " has been banned for attempting to ban IRC bots!");
   }
 });
 botSlave.addListener('+mode', function(channel, by, mode, argument, message) {
   if(mode == 'b' && argument == "IRCbot_Master") {
     unban("IRCbot_Master", "slave", "IRCbot_Slave");
-	kick(by, "Disconnected by admin.", "slave", "IRCbot_Slave");
-	botSlave.say(channel, by + " has been kicked for attempting to ban IRC bots!");
+	ban(by, "Disconnected by admin.", "slave", "IRCbot_Slave");
+	botSlave.say(channel, by + " has been banned for attempting to ban IRC bots!");
   }
 });
 ////
 botMaster.addListener('kick', function(channel, nick, by, reason, message) {
   if(nick == "IRCbot_Slave") {
-	kick(by, "Kicking IRC bots.", "master", "IRCbot_Master");
-	botSlave.say(channel, by + " has been kicked for kicking IRC bots!");
+	ban(by, "Kicking IRC bots.", "master", "IRCbot_Master");
+	botSlave.say(channel, by + " has been banned for kicking IRC bots!");
   }  
 });
 botSlave.addListener('kick', function(channel, nick, by, reason, message) {
   if(nick == "IRCbot_Master") {
     botSlave.send('ops plz');
-	kick(by, "Kicking IRC bots.", "slave", "IRCbot_Slave");
+	ban(by, "Kicking IRC bots.", "slave", "IRCbot_Slave");
   }  
 });
 
@@ -265,7 +265,7 @@ if(bot == "master"){
 } else {
   botSlave.send('/KICK', currentChannel, player, reason);
 }
-botSlave.say(currentChannel,  player + " has been kicked for kicking IRC bots!");
+botSlave.say(currentChannel,  player + " has been banned for kicking IRC bots!");
 console.log(sender + ": kicking " + player + " for kicking IRC bots!");
 };
 
