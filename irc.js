@@ -1,5 +1,6 @@
 var irc = require('irc');
 
+
 /*
 process.stdin.resume();
 process.stdin.setEncoding('utf8');
@@ -13,6 +14,7 @@ var fs = require("fs");
 var nemesis = 'none';
 var leader = 'whiskers75';
 var secondLeader = 'Bux';
+var welcomeFunction = 0;
 
 var botMaster = new irc.Client('irc.freenode.net', 'IRCbot_Master', {
   channels: [currentChannel],
@@ -101,6 +103,12 @@ botMaster.addListener('pm', function(sender, message) {
   if(message == "erase-nemesis") {
     nemesis = 'none';
   }
+  if(message == "welcomeOn") {
+    welcomeFunction = 1;
+  }
+  if(message == "welcomeOff") {
+    welcomeFunction = 0;
+  }
   if(message == "opslaves"){
     console.log(sender + ": Opping all slaves");
     op("IRCbot_Slave", "master", sender);
@@ -167,7 +175,9 @@ botMaster.addListener('pm', function(sender, message) {
 });
 
 botMaster.addListener('join', function(channel, nick, message) {
-  //if((nick != "IRCbot_Master") && (nick != "IRCbot_Slave")){ botMaster.say(channel, "Welcome, " + nick + " to the Node.JS IRC"); }
+  if(welcomeFunction = 1) {
+      if((nick != "IRCbot_Master") && (nick != "IRCbot_Slave")){ botMaster.say(channel, "Welcome, " + nick + " to the Node.JS IRC"); }
+  }
   if(nick == "IRCbot_Master") {
     botMaster.say('ops plz');
   } else if(nick == "IRCbot_Slave") {
@@ -208,7 +218,7 @@ botSlave.addListener('-mode', function(channel, by, mode, argument, message) {
   if(mode == 'o' && argument == "IRCbot_Master") {
     botSlave.say('ops plz'); 
     op("IRCbot_Master", "slave", "IRCbot_Slave");
-	setTimeout(function() { ban()(by, "Disconnected by admin.", "slave", "IRCbot_Slave"); }, 1200);
+	setTimeout(function() { ban(by, "Disconnected by admin.", "slave", "IRCbot_Slave"); }, 1200);
     nemesis = by;
     botMaster.say(channel, by + ' added as nemesis.');
 	botMaster.say(channel, by + " has been banned for deopping IRC bots!");
