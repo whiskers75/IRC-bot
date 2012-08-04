@@ -6,7 +6,7 @@ process.stdin.setEncoding('utf8');
 process.stdin.setRawMode(true);
 */
 
-var currentChannel = '#Node.js';
+var currentChannel = '#node-irc-bots';
 var init = false;
 var admins = ["Bux", "whiskers75"];
 var fs = require("fs");
