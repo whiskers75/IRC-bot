@@ -36,7 +36,7 @@ var botMaster = new irc.Client('irc.freenode.net', 'IRCbot_Master', {
 var botSlave = new irc.Client('irc.freenode.net', 'IRCbot_Slave', {
   channels: [currentChannel],
   userName: 'IRCbot_Slave',
-  realName: 'A slave IRC',
+  realName: 'The slave IRC',
   port: 6667,
   debug: false,
   showErrors: false,
