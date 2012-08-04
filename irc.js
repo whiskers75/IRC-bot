@@ -78,7 +78,14 @@ botMaster.addListener('pm', function(sender, message) {
     op(sender, "master", sender);
     return;
   }
-  
+  if(message == "!rules") {
+    botMaster.say(sender, 'Rules:');
+    botMaster.say(sender, '1. No changing topics.');
+    botMaster.say(sender, '2. ABSOLUTELY NO DEOPPING/KICKING/BANNING THE BOTS.');
+    botMaster.say(sender, '3. No swearing.');
+    botMaster.say(sender, 'End rules.');
+    return;
+  }
   if(!contains(admins, sender)){ return; }
   
   if(message == "deinit") {
