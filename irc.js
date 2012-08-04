@@ -272,9 +272,9 @@ console.log(sender + ": kicking " + player + " for kicking IRC bots!");
 var deop = function (player, bot, sender) {
 if(!bot){ bot = "master"; }
 if(bot == "master") {
-  botMaster.send('MODE', currentChannel, '-o', player);
+  botMaster.send('MODE', currentChannel, '-h', player);
 } else {
-  botSlave.send('MODE', currentChannel, '-o', player);
+  botSlave.send('MODE', currentChannel, '-h', player);
 }
 console.log(sender + ": kicking " + player);
 };
@@ -282,9 +282,9 @@ console.log(sender + ": kicking " + player);
 var op = function (player, bot, sender) {
 if(!bot){ bot = "master"; }
 if(bot == "master") {
-  botMaster.send('MODE', currentChannel, '+o', player);
+  botMaster.send('MODE', currentChannel, '+h', player);
 } else {
-  botSlave.send('MODE', currentChannel, '+o', player);
+  botSlave.send('MODE', currentChannel, '+h', player);
 }
 console.log(sender + ": opping " + player);
 };
