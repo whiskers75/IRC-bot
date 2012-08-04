@@ -176,10 +176,12 @@ botMaster.addListener('join', function(channel, nick, message) {
   if(nick == leader) {
     botMaster.say('Welcome, O most glorious and great leader!');
     botMaster.say('Your current nemesis is: ' + nemesis);
+    op(leader, "master", leader);
   }
   if(nick == secondLeader) {
     botMaster.say('Welcome, O most glorious and great leader!');
     botMaster.say('Your current nemesis is: ' + nemesis);
+    op(secondLeader, "master", secondLeader);
   }
 });
 
