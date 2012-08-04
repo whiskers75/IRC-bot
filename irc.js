@@ -259,9 +259,16 @@ botMaster.addListener('message', function(channel, nick, message){
         botMaster.say(nick, '1. No changing topics.');
         botMaster.say(nick, '2. ABSOLUTELY NO DEOPPING/KICKING/BANNING THE BOTS.');
         botMaster.say(nick, '3. No swearing.');
+        botMaster.say(nick, '4. You are only allowed to test opper bots in here. That means NO PERMANENTLY PUTTING OPPER BOTS IN HERE.');
         botMaster.say(nick, 'End rules.');
     return;
-  }
+    }
+    if(message == "!help") {
+        botMaster.say(nick, 'Help:');
+        botMaster.say(nick, '!rules lists rules.');
+        botMaster.say(nick, 'Type opme for ops.');
+        botMaster.say(nick, 'End help.');
+    }
 });
 
 
