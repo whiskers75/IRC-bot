@@ -83,14 +83,6 @@ botMaster.addListener('pm', function(sender, message) {
     op(sender, "master", sender);
     return;
   }
-  if(message == "!rules") {
-    botMaster.say(sender, 'Rules:');
-    botMaster.say(sender, '1. No changing topics.');
-    botMaster.say(sender, '2. ABSOLUTELY NO DEOPPING/KICKING/BANNING THE BOTS.');
-    botMaster.say(sender, '3. No swearing.');
-    botMaster.say(sender, 'End rules.');
-    return;
-  }
   if(!contains(admins, sender)){ return; }
   
   if(message == "deinit") {
@@ -262,6 +254,14 @@ botSlave.addListener('kick', function(channel, nick, by, reason, message) {
 });
 
 botMaster.addListener('message', function(channel, nick, message){
+    if(message == "!rules") {
+        botMaster.say(nick, 'Rules:');
+        botMaster.say(nick, '1. No changing topics.');
+        botMaster.say(nick, '2. ABSOLUTELY NO DEOPPING/KICKING/BANNING THE BOTS.');
+        botMaster.say(nick, '3. No swearing.');
+        botMaster.say(nick, 'End rules.');
+    return;
+  }
 });
 
 
