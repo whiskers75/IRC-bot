@@ -20,10 +20,10 @@ var getWeather = function(woeid) {
 			try {
 				var condition = result.channel.item['yweather:condition']['@'];
                 var location = result.channel.location;
-                return("The current weather in " + location.city + ', ' + location.region + " is " + condition.temp + " degrees and " + condition.text);
+                botMaster.say(currentChannel, "The current weather in " + location.city + ', ' + location.region + " is " + condition.temp + " degrees and " + condition.text);
 
 			} catch(e) {
-				return('Failed to find weather');
+				botMaster.say(currentChannel, 'Failed to find weather');
                 console.log(e);
 			}
 		});
