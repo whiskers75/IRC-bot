@@ -294,10 +294,10 @@ botMaster.addListener('message', function(channel, nick, message){
 
 
 botMaster.addListener('error', function(message) {
-  console.log(message);
+  console.log('Error! '+message);
 });
 botSlave.addListener('error', function(message) {
-  console.log(message);
+  console.log('Error! '+message);
 });
 
 
