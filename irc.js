@@ -11,7 +11,7 @@ var currentChannel = '##node-irc-bots';
 var init = false;
 var admins = ["Bux", "whiskers75"];
 var fs = require("fs");
-var nemesis = 'none';
+var nemesis = 'None';
 var leader = 'whiskers75';
 var secondLeader = 'Bux';
 var welcomeFunction = 0;
@@ -113,7 +113,7 @@ botMaster.addListener('pm', function(sender, message) {
     botMaster.say(sender, nemesis);
   }
   if(message == "erase-nemesis") {
-    nemesis = 'none';
+    nemesis = 'None';
   }
   if(message == "welcomeOn") {
     welcomeFunction = 1;
