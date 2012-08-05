@@ -56,6 +56,14 @@ botMaster.addListener('registered', function(message) {
 botMaster.addListener('motd', function(message) {
     console.log('MOTD Sent!')
 });
+botMaster.addListener('invite', function(channel, from, message) {
+    console.log('Invited to '+ channel);
+    botMaster.join(channel);
+});
+botSlave.addListener('invite', function(channel, from, message) {
+    console.log('Invited to '+ channel);
+    botSlave.join(channel);
+});
 botMaster.addListener('pm', function(sender, message) {
   var args = message.split(" ");
   if(message == "init"){
