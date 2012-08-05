@@ -1,6 +1,5 @@
 {
   "name": "irc_bot",
-  "subdomain": "DarthSalamon.irc_bot",
   "scripts": {
     "start": "irc.js"
   },
@@ -9,6 +8,7 @@
     "node": "0.6.x"
   },
   "dependencies": {
-    "irc": "0.3.4"
+    "irc": "0.3.4",
+    "yql": ""
   }
 }
