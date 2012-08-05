@@ -19,7 +19,7 @@ var welcomeFunction = 0;
 var botMaster = new irc.Client('irc.freenode.net', 'IRCbot_Master', {
   channels: [currentChannel],
   userName: 'IRCbot_Master',
-  realName: 'The Master IRC',
+  realName: 'The Master IRCbot',
   port: 6667,
   debug: false,
   showErrors: false,
@@ -36,7 +36,7 @@ var botMaster = new irc.Client('irc.freenode.net', 'IRCbot_Master', {
 var botSlave = new irc.Client('irc.freenode.net', 'IRCbot_Slave', {
   channels: [currentChannel],
   userName: 'IRCbot_Slave',
-  realName: 'The Slave IRC',
+  realName: 'The Slave IRCbot',
   port: 6667,
   debug: false,
   showErrors: false,
