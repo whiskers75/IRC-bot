@@ -10,7 +10,7 @@ process.stdin.setRawMode(true);
 
 var getWeather = function(zip) {
     
-    new YQL.exec("select item.condition.text from weather.forecast where location in (select id from weather.search where query=@zip)", function(response) {
+    new YQL.exec("select * from weather.forecast where location in (select id from weather.search where query=@zip)", function(response) {
     
     if (response.error) {
     console.log("Error: " + response.error.description);
