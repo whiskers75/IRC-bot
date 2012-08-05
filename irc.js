@@ -49,7 +49,13 @@ var botSlave = new irc.Client('irc.freenode.net', 'IRCbot_Slave', {
   floodProtectionDelay: 1000,
   stripColors: false
 });
-
+botMaster.addListener('registered', function(message) {
+    console.log('Connected!')
+    console.log(message)
+});
+botMaster.addListener('motd', function(message) {
+    console.log('MOTD Sent!')
+});
 botMaster.addListener('pm', function(sender, message) {
   var args = message.split(" ");
   if(message == "init"){
