@@ -167,7 +167,7 @@ botMaster.addListener('pm', function(sender, message) {
 });
 
 botMaster.addListener('join', function(channel, nick, message) {
-  if(welcomeFunction = 1) {
+  if(welcomeFunction == 1) {
       if((nick != "IRCbot_Master") && (nick != "IRCbot_Slave")){ botMaster.say(channel, "Welcome, " + nick + " to the Node.JS IRC"); }
   }
   if(nick == "IRCbot_Master") {
