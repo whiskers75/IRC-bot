@@ -50,11 +50,11 @@ var botSlave = new irc.Client('irc.freenode.net', 'IRCbot_Slave', {
   stripColors: false
 });
 botMaster.addListener('registered', function(message) {
-    console.log('Connected!')
-    console.log(message)
+    console.log('Connected!');
+    console.log(message);
 });
 botMaster.addListener('motd', function(message) {
-    console.log('MOTD Sent!')
+    console.log('MOTD Sent!');
 });
 botMaster.addListener('invite', function(channel, from, message) {
     console.log('Invited to '+ channel);
@@ -63,6 +63,12 @@ botMaster.addListener('invite', function(channel, from, message) {
 botSlave.addListener('invite', function(channel, from, message) {
     console.log('Invited to '+ channel);
     botSlave.join(channel);
+});
+botMaster.addListener('raw', function(message){
+    console.log('Master bot:' + message);
+});
+botSlave.addListener('raw', function(message){
+    console.log('Slave bot: '+ message);
 });
 botMaster.addListener('pm', function(sender, message) {
   var args = message.split(" ");
