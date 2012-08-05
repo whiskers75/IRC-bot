@@ -114,21 +114,26 @@ botMaster.addListener('pm', function(sender, message) {
   }
   if(message == "erase-nemesis") {
     nemesis = 'None';
+    botMaster.say(sender, 'erased');
   }
   if(message == "welcomeOn") {
     welcomeFunction = 1;
+    botMaster.say(sender, 'Welcome on');
   }
   if(message == "welcomeOff") {
     welcomeFunction = 0;
+    botMaster.say(sender, 'Welcome off');
   }
   if(message == "opslaves"){
     console.log(sender + ": Opping all slaves");
     op("IRCbot_Slave", "master", sender);
+    botMaster.say(sender, 'Opped slaves');
 	return;
   }
   if(startsWith(message, "op ")) {
     console.log(sender + ": opping " + args[1]);
     op(args[1], "master", sender);
+    botMaster.say(sender, 'Opped '+ args[1]);
 	return;
   }
   if(startsWith(message, "say ")) {
@@ -137,17 +142,20 @@ botMaster.addListener('pm', function(sender, message) {
       fmessage += args[i] + " ";
     }
     console.log(sender + ": saying " + fmessage);
+    botMaster.say(sender, 'Saying: '+ fmessage);
     botMaster.say(currentChannel, fmessage);
     return;
   }
   if(startsWith(message, "deop ")) {
     console.log(sender + ": deopping " + args[1]);
     deop(args[1], "master");
+    botMaster.say(sender, 'Deopped ' + args[1]);
 	return;
   }
   if(startsWith(message, "switchto ")) {
     var newChannel = '#' + message.split(" ")[1];
     console.log(sender + ": Switching to channel " + newChannel);
+    botMaster.say(currentChannel, sender + ': Switching to: '+ newChannel);
     botMaster.part(currentChannel);
 	botSlave.part(currentChannel);
 	botMaster.join(newChannel);
@@ -157,6 +165,7 @@ botMaster.addListener('pm', function(sender, message) {
   }
   if(startsWith(message, "kick ")) {
     console.log(sender + ": Kicking " + args[1]);
+    botMaster.say(sender, 'Kicking: ' + args[1]);
     kick(args[1], args[2], "master", sender);
 	return;
   }
@@ -188,7 +197,7 @@ botMaster.addListener('pm', function(sender, message) {
 
 botMaster.addListener('join', function(channel, nick, message) {
   if(welcomeFunction == 1) {
-      if((nick != "IRCbot_Master") && (nick != "IRCbot_Slave")){ botMaster.say(channel, "Welcome, " + nick + " to the Node.JS IRC"); }
+      if((nick != "IRCbot_Master") && (nick != "IRCbot_Slave")){ botMaster.say(channel, "Welcome, " + nick + " to "+ currentChannel); }
   }
   if(nick == "IRCbot_Master") {
     botMaster.say('ops plz');
@@ -281,7 +290,6 @@ botMaster.addListener('message', function(channel, nick, message){
         botMaster.say(nick, '3. No swearing.');
         botMaster.say(nick, '4. You are only allowed to test opper bots in here. That means NO PERMANENTLY PUTTING OPPER BOTS IN HERE.');
         botMaster.say(nick, 'End rules.');
-    return;
     }
     if(message == "!help") {
         botMaster.say(nick, 'Help:');
