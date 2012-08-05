@@ -1,5 +1,7 @@
 var irc = require('irc');
 var YQL = require('yql');
+var request = require('request');
+var xml2js = require('xml2js');
 
 
 /*
@@ -8,21 +10,24 @@ process.stdin.setEncoding('utf8');
 process.stdin.setRawMode(true);
 */
 
-var getWeather = function(zip) {
-    
-    new YQL.exec("select item.condition, location from weather.forecast where location in (select id from weather.search where query=@zip)", function(response) {
-    
-    if (response.error) {
-    console.log("Error: " + response.error.description);
-    }
-    else {
-            var location = response.query.results.channel.location;
-            var condition = response.query.results.channel.yweather.condition;
-            return("The current weather in " + location.city + ', ' + location.region + " is " + condition.temp + " degrees and " + condition.text);
-    }
-    
-    }, {"zip": zip});
+var getWeather = function(woeid) {
+    var url = 'http://weather.yahooapis.com/forecastrss?w='+woeid+'&u=c';
 
+	request(url, function(error, res, body) {
+		var parser = new xml2js.Parser();
+		parser.parseString(body, function (err, result) {
+
+			try {
+				var condition = result.channel.item['yweather:condition']['@'];
+                var location = result.channel.location;
+                return("The current weather in " + location.city + ', ' + location.region + " is " + condition.temp + " degrees and " + condition.text);
+
+			} catch(e) {
+				return('Failed to find weather');
+                console.log(e);
+			}
+		});
+	});
 };
 
 
