@@ -65,10 +65,10 @@ botSlave.addListener('invite', function(channel, from, message) {
     botSlave.join(channel);
 });
 botMaster.addListener('raw', function(message){
-    console.log('Master bot:' + message);
+    console.log('Master bot:' + JSON.stringify(message));
 });
 botSlave.addListener('raw', function(message){
-    console.log('Slave bot: '+ message);
+    console.log('Slave bot: '+ JSON.stringify(message));
 });
 botMaster.addListener('pm', function(sender, message) {
   var args = message.split(" ");
