@@ -17,7 +17,7 @@ var getWeather = function(zip) {
     }
     else {
             var location = response.query.results.channel.location;
-            var condition = response.query.results.channel.item.yweather.condition;
+            var condition = response.query.results.channel.item.condition;
             return("The current weather in " + location.city + ', ' + location.region + " is " + condition.temp + " degrees and " + condition.text);
     }
     
