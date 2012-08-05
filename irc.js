@@ -10,14 +10,14 @@ process.stdin.setRawMode(true);
 
 var getWeather = function(zip) {
     
-    new YQL.exec("select item, location from weather.forecast where location in (select id from weather.search where query=@zip)", function(response) {
+    new YQL.exec("select item.condition, location from weather.forecast where location in (select id from weather.search where query=@zip)", function(response) {
     
     if (response.error) {
     console.log("Error: " + response.error.description);
     }
     else {
             var location = response.query.results.channel.location;
-            var condition = response.query.results.channel.item.condition;
+            var condition = response.query.results.channel.item['yweather:condition'];
             return("The current weather in " + location.city + ', ' + location.region + " is " + condition.temp + " degrees and " + condition.text);
     }
     
