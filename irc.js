@@ -19,8 +19,8 @@ var getWeather = function(woeid) {
 
 			try {
 				var condition = result.channel.item['yweather:condition']['@'];
-                var location = result.channel.location;
-                botMaster.say(currentChannel, "The current weather in " + location.city + ', ' + location.region + " is " + condition.temp + " degrees and " + condition.text);
+                // var location = result.channel.location;
+                botMaster.say(currentChannel, "The current weather is " + condition.temp + " degrees C and " + condition.text); // in " + location.city + ', ' + location.region + "
 
 			} catch(e) {
 				botMaster.say(currentChannel, 'Failed to find weather');
