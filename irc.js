@@ -19,7 +19,7 @@ var getWeather = function(woeid, sender) {
 
 			try {
 				var condition = result.channel.item['yweather:condition']['@'];
-                botMaster.say(condition.title);
+                botMaster.say(sender, condition.title);
                 botMaster.say(sender, "The current weather is " + condition.temp + " degrees C and " + condition.text); 
                 
 			} catch(e) {
