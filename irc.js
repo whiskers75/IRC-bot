@@ -10,7 +10,7 @@ process.stdin.setEncoding('utf8');
 process.stdin.setRawMode(true);
 */
 
-var getWeather = function(woeid) {
+var getWeather = function(woeid, sender) {
     var url = 'http://weather.yahooapis.com/forecastrss?w='+woeid+'&u=c';
 
 	request(url, function(error, res, body) {
@@ -19,8 +19,10 @@ var getWeather = function(woeid) {
 
 			try {
 				var condition = result.channel.item['yweather:condition']['@'];
+                var forecast = result.channel.item['yweather:forecast'];
                 // var location = result.channel.location;
-                botMaster.say(currentChannel, "The current weather is " + condition.temp + " degrees C and " + condition.text); // in " + location.city + ', ' + location.region + "
+                botMaster.say(sender, "The current weather is " + condition.temp + " degrees C and " + condition.text); // in " + location.city + ', ' + location.region + "
+                botMaster.say(sender, "The forecast for "+ forecast.date + " is a high of "+ forecast.high + "  ,a low of "+ forecast.low + "degrees C and  "+ forecast.text);
 
 			} catch(e) {
 				botMaster.say(currentChannel, 'Failed to find weather');
