@@ -322,12 +322,12 @@ botMaster.addListener('message', function(channel, nick, message){
         botMaster.say(nick, '!rules lists rules.');
         botMaster.say(nick, 'Type opme for ops.');
         botMaster.say(nick, '!weather [Yahoo! WOEID] gives the weather for that WOEID (Where on Earth ID)');
-        botMaster.say(nick, 'To find your WOEID go to http://woeid.rosselliot.co.nz/')
+        botMaster.say(nick, 'To find your WOEID go to http://woeid.rosselliot.co.nz/');
         botMaster.say(nick, 'End help.');
     }
     if(startsWith(message, '!weather ')) {
         var args = message.split(" ");
-        botMaster.say(nick, getWeather(args[1]));
+        getWeather(args[1], nick);
     }
 });
 
