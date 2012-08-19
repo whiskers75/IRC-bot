@@ -47,7 +47,7 @@ var shortenLink = function(link, sender) {
 var calculate = function(n1, oper, n2, sender) {
     var ans = 0;
     if (oper == 'add') {
-        ans = n1 + n2;
+        ans = parseInt(n1, 10) + parseInt(n2, 10);
     }
     if (oper == 'minus') {
         ans = n1 - n2;
