@@ -40,7 +40,7 @@ var shortenLink = function(link, sender) {
         }
         var short_url = response.data.url;
         console.log(short_url);
-        botMaster.say(sender, 'Shortened URL:' + short_url);
+        botMaster.say(sender, 'Shortened URL: ' + short_url);
     });
 };
 
