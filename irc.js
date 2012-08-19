@@ -37,11 +37,14 @@ var shortenLink = function(link, sender) {
     
     try {
         request(url, function(error, res, body) {
-            botMaster.say(sender, "Shortened Link:"+body.data.url);
+            var parser = new xml2js.Parser();
+            parser.parseString(body, function(err, result) {
+                botMaster.say(sender, "Shortened Link: "+body.data['url']);
         });
     }
     catch(e) {
         botMaster.say(sender, 'Error!');
+        console.log(e);
     }
 };
 
