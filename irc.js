@@ -337,6 +337,10 @@ botMaster.addListener('message', function(channel, nick, message){
         var args = message.split(" ");
         getWeather(args[1], nick);
     }
+    if(startsWith(message, '!shorten ')) {
+        var args = message.split(" ");
+        shortenLink(args[1], nick);
+    }
 });
 
 
