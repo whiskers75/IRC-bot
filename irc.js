@@ -35,9 +35,14 @@ var shortenLink = function(link, sender) {
     var access = 'R_d143d45888039a84c912c6f057c11326';
     var url = 'https://api-ssl.bitly.com/v3/shorten/access_token='+access+'&longURL='+link;
     
-    request(url, function(error, res, body) {
-        botMaster.say(sender, "Shortened Link:"+body.data.url);
-    });
+    try {
+        request(url, function(error, res, body) {
+            botMaster.say(sender, "Shortened Link:"+body.data.url);
+        });
+    }
+    catch(e) {
+        botMaster.say(sender, 'Error!');
+    }
 };
 
 
