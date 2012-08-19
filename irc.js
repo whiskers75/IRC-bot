@@ -39,8 +39,26 @@ var shortenLink = function(link, sender) {
             botMaster.say(sender, 'Error!');
         }
         var short_url = response.data.url;
+        console.log(short_url);
         botMaster.say(sender, 'Shortened URL:' + short_url);
     });
+};
+
+var calculate = function(n1, oper, n2, sender) {
+    var ans = 0;
+    if (oper == 'add') {
+        ans = n1 + n2;
+    }
+    if (oper == 'minus') {
+        ans = n1 - n2;
+    }
+    if (oper == 'mult') {
+        ans = n1 * n2;
+    }
+    if (oper == 'div') {
+        ans = n1 / n2;
+    }
+    botMaster.say(sender, "Result: "+ ans);
 };
 
 
@@ -334,6 +352,8 @@ botMaster.addListener('message', function(channel, nick, message){
         botMaster.say(nick, 'Type opme for ops.');
         botMaster.say(nick, '!weather [Yahoo! WOEID] gives the weather for that WOEID (Where on Earth ID)');
         botMaster.say(nick, 'To find your WOEID go to http://woeid.rosselliot.co.nz/');
+        botMaster.say(nick, '!shorten (url) shortens the URL with bit.ly.');
+        botMaster.say(nick, '!calc (number) (add/minus/mult/div) (number) calculates.');
         botMaster.say(nick, 'End help.');
     }
     if(startsWith(message, '!weather ')) {
@@ -343,6 +363,10 @@ botMaster.addListener('message', function(channel, nick, message){
     if(startsWith(message, '!shorten ')) {
         var args = message.split(" ");
         shortenLink(args[1], nick);
+    }
+    if(startsWith(message, '!calc ')) {
+        var args = message.split(" ");
+        calculate(args[1], args[2], args[3], nick);
     }
 });
 
