@@ -2,6 +2,8 @@ var irc = require('irc');
 var YQL = require('yql');
 var request = require('request');
 var xml2js = require('xml2js');
+var Bitly = require('bitly');
+var bitly = new Bitly('freenode', 'R_d143d45888039a84c912c6f057c11326');
 
 
 /*
@@ -32,14 +34,12 @@ var getWeather = function(woeid, sender) {
 
 
 var shortenLink = function(link, sender) {
-    var access = 'R_d143d45888039a84c912c6f057c11326';
-    var url = 'https://api-ssl.bitly.com/v3/shorten/access_token='+access+'&longURL='+link;
-    
-    request(url, function(error, res, body) { 
-        var parser = new xml2js.Parser();
-        parser.parseString(body, function(err, result) {
-            botMaster.say(sender, "Shortened Link: " + body.data.url);
-        });
+    bitly.shorten(link, function(err, response) {
+        if(err) {
+            botMaster.say(sender, 'Error!');
+        }
+        var short_url = response.data.url;
+        botMaster.say(sender, 'Shortened URL:' + short_url);
     });
 };
 
