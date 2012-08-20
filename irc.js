@@ -5,7 +5,7 @@ var request = require('request');
 var xml2js = require('xml2js');
 var Bitly = require('bitly');
 var bitly = new Bitly('freenode', 'R_d143d45888039a84c912c6f057c11326');
-var init = 1;
+var init = 0; //Autoinit, doesn't seem to work 
 
 
 http.createServer(function (req, res) {
@@ -144,7 +144,8 @@ botMaster.addListener('pm', function(sender, message) {
       // Read the admins.txt file
       fs.readFile('./admins.txt', function(error, content) {
         if(error) { console.log(error); return;}
-        var line = line.split(content, "\r\n");
+        var line = "";
+        line = line.split(content, "\r\n");
         for(i = 0; i < line.length; i++){
            admins[admins.length] == line;
         }
