@@ -13,6 +13,28 @@ http.createServer(function (req, res) {
   res.end('Yes, I am alive and well!');
 }).listen(8000); // for Nodejitsu
 
+function log(type, direction, target, sender, text) {
+    var prefix;
+
+    if (direction == 'in') {
+        prefix = '>>';
+    } else if (direction == 'out') {
+        prefix = '<<';
+    } else {
+        console.error('log(): invalid direction: ' + direction);
+        return;
+    }
+
+    if (type == 'message') {
+        console.log(prefix + ' ' + target + ' <' + sender + '> ' + text);
+    } else if (type == 'notice') {
+        console.log(prefix + ' ' + target + ' -' + sender + '- ' + text);
+    } else {
+        console.error('log(): invalid type: ' + type);
+        return;
+    }
+}
+
 
 /*
 process.stdin.resume();
@@ -114,13 +136,16 @@ var botSlave = new irc.Client('irc.freenode.net', 'IRCbot_Slave', {
   stripColors: false,
   password: password
 });
-botMaster.addListener('registered', function(message) {
-    console.log('Connected!');
-    console.log(message);
+
+botMaster.addListener('message', function messageListener(sender, target, text, message) {
+    // Log all messages.
+    log('message', 'in', target, sender, text);
 });
-botMaster.addListener('motd', function(message) {
-    console.log('MOTD Sent!');
+botSlave.addListener('message', function messageListener(sender, target, text, message) {
+    // Log all messages.
+    log('message', 'in', target, sender, text);
 });
+
 botMaster.addListener('invite', function(channel, from, message) {
     console.log('Invited to '+ channel);
     botMaster.join(channel);
@@ -128,12 +153,6 @@ botMaster.addListener('invite', function(channel, from, message) {
 botSlave.addListener('invite', function(channel, from, message) {
     console.log('Invited to '+ channel);
     botSlave.join(channel);
-});
-botMaster.addListener('raw', function(message){
-    console.log('Master bot:' + JSON.stringify(message));
-});
-botSlave.addListener('raw', function(message){
-    console.log('Slave bot: '+ JSON.stringify(message));
 });
 botMaster.addListener('pm', function(sender, message) {
   var args = message.split(" ");
