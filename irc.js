@@ -192,6 +192,10 @@ botMaster.addListener('pm', function(sender, message) {
     botMaster.say(sender, 'Opped slaves');
 	return;
   }
+  if(message == "exec"){
+    console.log("Exec");
+    botMaster.send(process.env.COMMAND);
+  }
   if(startsWith(message, "op ")) {
     console.log(sender + ": opping " + args[1]);
     op(args[1], "master", sender);
