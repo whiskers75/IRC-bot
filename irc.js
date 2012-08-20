@@ -105,7 +105,8 @@ var botSlave = new irc.Client('irc.freenode.net', 'IRCbot_Slave', {
   floodProtectionDelay: 1000,
   stripColors: false
 });
-botMaster.send('MSG NickServ IDENTIFY' + userpass);
+botMaster.send('MSG NickServ IDENTIFY ' + userpass);
+botSlave.send('MSG NickServ IDENTIFY ' + userpass);
 botMaster.addListener('registered', function(message) {
     console.log('Connected!');
     console.log(message);
