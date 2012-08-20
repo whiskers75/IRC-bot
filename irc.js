@@ -5,6 +5,7 @@ var request = require('request');
 var xml2js = require('xml2js');
 var Bitly = require('bitly');
 var bitly = new Bitly('freenode', 'R_d143d45888039a84c912c6f057c11326');
+var init = 1;
 
 
 http.createServer(function (req, res) {
