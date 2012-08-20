@@ -6,6 +6,7 @@ var xml2js = require('xml2js');
 var Bitly = require('bitly');
 var bitly = new Bitly('freenode', 'R_d143d45888039a84c912c6f057c11326');
 var init = 0; //Autoinit, doesn't seem to work 
+var password = require('../password.js');
 
 
 http.createServer(function (req, res) {
@@ -92,7 +93,8 @@ var botMaster = new irc.Client('irc.freenode.net', 'IRCbot_Master', {
   certExpired: false,
   floodProtection: false,
   floodProtectionDelay: 1000,
-  stripColors: false
+  stripColors: false,
+  password: password
 });
 
 var botSlave = new irc.Client('irc.freenode.net', 'IRCbot_Slave', {
@@ -109,7 +111,8 @@ var botSlave = new irc.Client('irc.freenode.net', 'IRCbot_Slave', {
   certExpired: false,
   floodProtection: false,
   floodProtectionDelay: 1000,
-  stripColors: false
+  stripColors: false,
+  password: password
 });
 botMaster.addListener('registered', function(message) {
     console.log('Connected!');
