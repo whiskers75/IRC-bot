@@ -144,8 +144,7 @@ botMaster.addListener('pm', function(sender, message) {
       // Read the admins.txt file
       fs.readFile('./admins.txt', function(error, content) {
         if(error) { console.log(error); return;}
-        var line = "";
-        line = line.split(content, "\r\n");
+        var line = content.split(content, "\r\n");
         for(i = 0; i < line.length; i++){
            admins[admins.length] == line;
         }
