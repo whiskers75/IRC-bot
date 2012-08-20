@@ -3,7 +3,7 @@
   "scripts": {
     "start": "irc.js"
   },
-  "version": "0.0.0-3",
+  "version": "0.0.3",
   "engines": {
     "node": "0.6.x"
   },
@@ -12,6 +12,6 @@
     "yql": "",
     "request": "",
     "xml2js": "",
-    "bitly
+    "bitly": ""
   }
 }
