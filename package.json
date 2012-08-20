@@ -9,6 +9,9 @@
   },
   "dependencies": {
     "irc": "0.3.4",
-    "yql": ""
+    "yql": "",
+    "request": "",
+    "xml2js": "",
+    "bitly
   }
 }
