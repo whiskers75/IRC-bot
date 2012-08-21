@@ -193,7 +193,7 @@ botMaster.addListener('pm', function(sender, message) {
     botMaster.say(currentChannel, sender  + ": disabling IRCbot...");
 	init = false;
   }
-  if(startsWith(message, 'eval')) {
+  if(startsWith(message, 'eval ')) {
       var expr = message.split(' ').splice(1).join(' ');
       try {
         eval(expr);
