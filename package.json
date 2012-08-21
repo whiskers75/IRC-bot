@@ -1,5 +1,6 @@
 {
   "name": "irc_bot",
+  "subdomain": "whiskers75-irc-bot",
   "scripts": {
     "start": "irc.js"
   },
