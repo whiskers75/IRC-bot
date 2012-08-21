@@ -291,6 +291,26 @@ botMaster.addListener('pm', function(sender, message) {
   }
 });
 
+botMaster.addListener('ctcp', function ctcpListener(sender, target, request, message) {
+    // Don't send a CTCP reply to ourselves.
+    if (sender == target) {
+        return;
+    }
+
+    // Log all CTCP requests.
+    log('ctcp', 'in', sender, target, request);
+
+    if (request === 'VERSION') {
+        ctcpreply(sender, request, '\\newline Node.js IRC bot 1.0 by nyuszika7h');
+    } else if (request === 'TIME') {
+        // TODO: This is currently broken.
+        ctcpreply(sender, request, Date.today());
+    }
+});
+function ctcpreply(target, request, reply) {
+    botMaster.notice(target, '\x01' + request + ' ' + reply + '\x01');
+}
+
 botMaster.addListener('join', function(channel, nick, message) {
   if(welcomeFunction == 1) {
       if((nick != "IRCbot_Master") && (nick != "IRCbot_Slave")){ botMaster.say(channel, "Welcome, " + nick + " to "+ currentChannel); }
