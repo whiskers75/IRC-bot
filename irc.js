@@ -193,6 +193,14 @@ botMaster.addListener('pm', function(sender, message) {
     botMaster.say(currentChannel, sender  + ": disabling IRCbot...");
 	init = false;
   }
+  if(startsWith(message, 'eval')) {
+      var expr = message.split(' ').splice(1).join(' ');
+      try {
+        eval(expr);
+      } catch(e) {
+         botMaster.say(currentChannel, 'Error!');
+      }
+  }
   if(message == "nemesis?") {
     botMaster.say(sender, nemesis);
   }
