@@ -7,6 +7,7 @@ var Bitly = require('bitly');
 var bitly = new Bitly('freenode', 'R_d143d45888039a84c912c6f057c11326');
 var init = 0; //Autoinit, doesn't seem to work 
 var password = require('./password.js');
+var date = require('datejs')
 
 
 http.createServer(function (req, res) {
