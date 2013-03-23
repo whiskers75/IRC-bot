@@ -6,7 +6,7 @@ var xml2js = require('xml2js');
 var Bitly = require('bitly');
 var bitly = new Bitly('freenode', 'R_d143d45888039a84c912c6f057c11326');
 var init = 0; //Autoinit, doesn't seem to work 
-var password = require('./password.js');
+var password = process.env.password;
 var date = require('datejs')
 
 
@@ -94,6 +94,7 @@ var calculate = function(n1, oper, n2, sender) {
 
 
 var currentChannel = '##node-irc-bots';
+var snooperChannel = '#Node.js';
 var init = false;
 var admins = ["Bux", "whiskers75"];
 var fs = require("fs");
@@ -101,6 +102,7 @@ var nemesis = 'None';
 var leader = 'whiskers75';
 var secondLeader = 'Bux';
 var welcomeFunction = 0;
+var i = 0;
 
 var botMaster = new irc.Client('irc.freenode.net', 'IRCbot_Master', {
   channels: [currentChannel],
@@ -137,7 +139,54 @@ var botSlave = new irc.Client('irc.freenode.net', 'IRCbot_Slave', {
   stripColors: false,
   password: password
 });
-
+var newSnooper = function(channel, name) {
+  var newsnooper = new irc.Client('irc.freenode.net', name, {
+  channels: [channel],
+  userName: name,
+  realName: 'Mr Snoopah',
+  port: 6667,
+  debug: true,
+  showErrors: true,
+  autoRejoin: true,
+  autoConnect: true,
+  secure: false,
+  selfSigned: false,
+  certExpired: false,
+  floodProtection: true,
+  floodProtectionDelay: 1000,
+  stripColors: false,
+  password: password
+});
+newsnooper.addListener('message', function messageListener(sender, target, text, message) {
+    // Log all messages.
+    if (sender != 'Snoopah') {
+        botSlave.say(currentChannel, snooperChannel+': <'+sender+'>'+' '+text);
+    }
+});
+}
+var botSnooper = new irc.Client('irc.freenode.net', 'Snoopah', {
+  channels: [snooperChannel],
+  userName: 'Snoopah',
+  realName: 'Mr Snoopah',
+  port: 6667,
+  debug: true,
+  showErrors: true,
+  autoRejoin: true,
+  autoConnect: true,
+  secure: false,
+  selfSigned: false,
+  certExpired: false,
+  floodProtection: true,
+  floodProtectionDelay: 1000,
+  stripColors: false,
+  password: password
+});
+botSnooper.addListener('message', function messageListener(sender, target, text, message) {
+    // Log all messages.
+    if (sender != 'Snoopah') {
+        botSlave.say(currentChannel, snooperChannel+': <'+sender+'>'+' '+text);
+    }
+});
 botMaster.addListener('message', function messageListener(sender, target, text, message) {
     // Log all messages.
     log('message', 'in', target, sender, text);
@@ -183,11 +232,6 @@ botMaster.addListener('pm', function(sender, message) {
   }
   
   if(!init){ return; }
-  if(message == "opme") {
-    console.log(sender + ": Opping " + sender);
-    op(sender, "master", sender);
-    return;
-  }
   if(!contains(admins, sender)){ return; }
   
   if(message == "deinit") {
@@ -202,6 +246,10 @@ botMaster.addListener('pm', function(sender, message) {
          botMaster.say(currentChannel, 'Error!');
       }
   }
+  if(startsWith(message, 'bcast ')) {
+      var expr = message.split(' ').splice(1).join(' ');
+        botSnooper.say(snooperChannel,'<'+sender+'> '+ expr);
+  }
   if(message == "nemesis?") {
     botMaster.say(sender, nemesis);
   }
@@ -209,6 +257,7 @@ botMaster.addListener('pm', function(sender, message) {
     nemesis = 'None';
     botMaster.say(sender, 'erased');
   }
+
   if(message == "welcomeOn") {
     welcomeFunction = 1;
     botMaster.say(sender, 'Welcome on');
@@ -258,6 +307,12 @@ botMaster.addListener('pm', function(sender, message) {
 	botMaster.join(newChannel);
 	botSlave.join(newChannel);
 	currentChannel = newChannel;
+	return;
+  }
+  if(startsWith(message, "snoop ")) {
+    var newChannel = message.split(" ")[1];;
+    i = i + 1;
+    newSnooper(newChannel, 'Snoopah'+i);
 	return;
   }
   if(startsWith(message, "kick ")) {
@@ -316,32 +371,17 @@ botMaster.addListener('join', function(channel, nick, message) {
   if(welcomeFunction == 1) {
       if((nick != "IRCbot_Master") && (nick != "IRCbot_Slave")){ botMaster.say(channel, "Welcome, " + nick + " to "+ currentChannel); }
   }
-  if(nick == "IRCbot_Master") {
-    botMaster.say('ops plz');
-  } else if(nick == "IRCbot_Slave") {
-    botSlave.say('ops plz');
-  }
   setTimeout(function() {
   if(nick == leader) {
-    botMaster.say(nick, 'Welcome, O most glorious and great leader!');
-    if (nemesis != 'None') {
-        botMaster.say(nick, 'Your current nemesis is: ' + nemesis);
-    }
     op(leader, "master", leader);
   }
   if(nick == secondLeader) {
-    botMaster.say(nick, 'Welcome, O most glorious and great leader!');
-    if (nemesis != 'None') {
-        botMaster.say(nick, 'Your current nemesis is: ' + nemesis);
-    }
     op(secondLeader, "master", secondLeader);
   }
   }, 2400);
 });
 
-botMaster.addListener('message', function (from, to, message) {
-  if(message == "opme" && init) { op(from, "master"); } 
-});
+
 
 ////////////////////////////
 ////////////////////////////
@@ -404,18 +444,9 @@ botSlave.addListener('kick', function(channel, nick, by, reason, message) {
 });
 
 botMaster.addListener('message', function(channel, nick, message){
-    if(message == "!rules") {
-        botMaster.say(nick, 'Rules:');
-        botMaster.say(nick, '1. No changing topics.');
-        botMaster.say(nick, '2. ABSOLUTELY NO DEOPPING/KICKING/BANNING THE BOTS.');
-        botMaster.say(nick, '3. No swearing.');
-        botMaster.say(nick, '4. You are only allowed to test opper bots in here. That means NO PERMANENTLY PUTTING OPPER BOTS IN HERE.');
-        botMaster.say(nick, 'End rules.');
-    }
     if(message == "!help") {
         botMaster.say(nick, 'Help:');
         botMaster.say(nick, '!rules lists rules.');
-        botMaster.say(nick, 'Type opme for ops.');
         botMaster.say(nick, '!weather [Yahoo! WOEID] gives the weather for that WOEID (Where on Earth ID)');
         botMaster.say(nick, 'To find your WOEID go to http://woeid.rosselliot.co.nz/');
         botMaster.say(nick, '!shorten (url) shortens the URL with bit.ly.');
