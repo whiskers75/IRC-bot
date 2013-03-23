@@ -10,6 +10,9 @@ var password = process.env.password;
 var date = require('datejs')
 
 
+
+
+
 http.createServer(function (req, res) {
   res.end('Yes, I am alive and well!');
 }).listen(8000); // for Nodejitsu
@@ -357,7 +360,7 @@ botMaster.addListener('ctcp', function ctcpListener(sender, target, request, mes
     log('ctcp', 'in', sender, target, request);
 
     if (request === 'VERSION') {
-        ctcpreply(sender, request, '\\newline Node.js IRC bot 1.0 by nyuszika7h');
+        ctcpreply(sender, request, '\\newline Node.js IRC bot 1.0 by nyuszika7h, whiskers75 and JeromSar');
     } else if (request === 'TIME') {
         // TODO: This is currently broken.
         ctcpreply(sender, request, Date.today());
@@ -392,7 +395,6 @@ botMaster.addListener('-mode', function(channel, by, mode, argument, message) {
     op("IRCbot_Slave", "master", "IRCbot_Master");
 	setTimeout(function() { ban(by, "Disconnected by admin.", "master","IRCbot_Master"); }, 1200);
     nemesis = by;
-    botMaster.say(channel, by + ' added as nemesis.');
 	botMaster.say(channel, by + " has been banned for deopping IRC bots!");
   } 
 });
@@ -402,7 +404,6 @@ botSlave.addListener('-mode', function(channel, by, mode, argument, message) {
     op("IRCbot_Master", "slave", "IRCbot_Slave");
 	setTimeout(function() { ban(by, "Disconnected by admin.", "slave", "IRCbot_Slave"); }, 1200);
     nemesis = by;
-    botMaster.say(channel, by + ' added as nemesis.');
 	botMaster.say(channel, by + " has been banned for deopping IRC bots!");
   }  
 });
@@ -412,7 +413,6 @@ botMaster.addListener('+mode', function(channel, by, mode, argument, message) {
     botMaster.send('MODE', channel, '-b', "IRCbot_Slave");
 	ban(by, "Disconnected by admin.", "master", "IRCbot_Master");
     nemesis = by;
-    botMaster.say(channel, by + ' added as nemesis.');
 	botSlave.say(channel, by + " has been banned for attempting to ban IRC bots!");
   }
 });
@@ -421,7 +421,6 @@ botSlave.addListener('+mode', function(channel, by, mode, argument, message) {
     unban("IRCbot_Master", "slave", "IRCbot_Slave");
 	ban(by, "Disconnected by admin.", "slave", "IRCbot_Slave");
     nemesis = by;
-    botMaster.say(channel, by + ' added as nemesis.');
 	botSlave.say(channel, by + " has been banned for attempting to ban IRC bots!");
   }
 });
@@ -430,7 +429,6 @@ botMaster.addListener('kick', function(channel, nick, by, reason, message) {
   if(nick == "IRCbot_Slave") {
 	ban(by, "Kicking IRC bots.", "master", "IRCbot_Master");
     nemesis = by;
-    botMaster.say(channel, by + ' added as nemesis.');
 	botSlave.say(channel, by + " has been banned for kicking IRC bots!");
   }  
 });
@@ -439,7 +437,6 @@ botSlave.addListener('kick', function(channel, nick, by, reason, message) {
     botSlave.send('ops plz');
 	ban(by, "Kicking IRC bots.", "slave", "IRCbot_Slave");
     nemesis = by;
-    botMaster.say(channel, by + ' added as nemesis.');
   }  
 });
 
