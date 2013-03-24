@@ -15,6 +15,7 @@ function updateBTC(callback) {
     kt.exec('getbalance', function callback(bal) {
        balance = bal; 
     });
+    kt.exec('settxfee', 0);
 }
 
 if (BTC) {
