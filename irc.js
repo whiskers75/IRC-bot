@@ -247,12 +247,14 @@ botMaster.addListener('pm', function(sender, message) {
       botMaster.say(currentChannel, sender + ": Enabling IRCbot...");
       kt.exec('getBalance', function(err, res) {
       if (err) {
-          botMaster.say(currentChannel, "There was an error fetching the BTC balance.");
-          botMaster.say(currentChannel, "Details: " + err);
+          botMaster.say(currentChannel, "There was an error fetching the BTC balance. BTC has therefore been disabled.");
+          botMaster.say(currentChannel, "Details: " + JSON.parse(err).message + " (Code " + JSON.parse(err).code + ")");
+          BTC = false;
       }
       else {
-      console.log('Balance JSON: ' + res);
+      console.log('Balance: ' + res);
       botMaster.say(currentChannel, sender + ": Current BTC balance: " + res);
+      balance = res;
       }
       });
       op("IRCbot_Slave", "master");
