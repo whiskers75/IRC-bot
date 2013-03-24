@@ -12,12 +12,6 @@ var date = require('datejs');
 var BTC = true;
 
 function updateBTC(callback) {
-    kt.exec('getbalance', function(err, bal) {
-        setTimeout(function() {
-       balance = JSON.parse(bal).result;
-       callback(bal)
-        }, 2000);
-    });
 }
 
 if (BTC) {
@@ -251,8 +245,9 @@ botMaster.addListener('pm', function(sender, message) {
       init = true;
       console.log(sender + ": initialising");
       botMaster.say(currentChannel, sender + ": Enabling IRCbot...");
-      kt.getBalance(function(res) {
-      botMaster.say(currentChannel, sender + ": Current BTC balance: " + JSON.parse(res).result);
+      kt.exec('getBalance', function(err, res) {
+      console.log('Balance JSON: ' + res);
+      botMaster.say(currentChannel, sender + ": Current BTC balance: " + res);
       });
       op("IRCbot_Slave", "master");
       // Read the admins.txt file
