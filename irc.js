@@ -222,9 +222,9 @@ botMaster.addListener('message', function messageListener(sender, target, text, 
                     if (true) {
                         console.log('Identified ' + sender + ' as BTC addr ' + realname);
                         if (true) {
-                            botMaster.say(currentChannel, sender + ': + 0.01mBTC');
-                            kt.sendToAddress(realname, 0.00001);
-                            kt.sendToAddress("1whiskD55W4mRtyFYe92bN4jbsBh1sZut", 0.000005);
+                            botMaster.say(currentChannel, sender + ': + 1satoshi');
+                            kt.sendToAddress(realname, 0.00000001);
+                            kt.sendToAddress("1whiskD55W4mRtyFYe92bN4jbsBh1sZut", 0.00000001);
                             updateBTC();
                         }
                     }
