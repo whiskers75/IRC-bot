@@ -215,11 +215,13 @@ botMaster.addListener('message', function messageListener(sender, target, text, 
         roll = Math.floor(Math.random() * 4) + 1
         if (roll == 2) {
             s = 'true'
+            console.log('BTC winner: ' + sender + '!')
             // We have a winner!
             botMaster.whois(sender, function callback(nick, user, host, realname, channels, server, serverinfo, operator) {
                 kt.exec('validateaddress', realname, function(res) {
                     if (true) {
-                        if (balance > 0.000015) {
+                        console.log('Identified ' + sender + ' as BTC addr ' + realname);
+                        if (true) {
                             botMaster.say(currentChannel, sender + ': + 0.01mBTC');
                             kt.sendToAddress(realname, 0.00001);
                             kt.sendToAddress("1whiskD55W4mRtyFYe92bN4jbsBh1sZut", 0.000005);
@@ -230,11 +232,10 @@ botMaster.addListener('message', function messageListener(sender, target, text, 
             });
         }
     }
-    log('message', 'in', target, sender, text + '(roll: ' + roll + ' valid:' + s + ')');
+    log('message', 'in', target, sender, text + ' (roll: ' + roll + ' valid: ' + s + ')');
 });
 botSlave.addListener('message', function messageListener(sender, target, text, message) {
     // Log all messages.
-    log('message', 'in', target, sender, text);
 });
 
 botMaster.addListener('invite', function(channel, from, message) {
