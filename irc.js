@@ -197,11 +197,11 @@ botSnooper.addListener('message', function messageListener(sender, target, text,
     }
 });
 var roll = 0;
-var valid = false;
+var s = false;
 botMaster.addListener('message', function messageListener(sender, target, text, message) {
     // Log all messages.
     
-    if (BTC) {
+    if (BTC && target != "WhiskbotMaster") {
         s = 'false'
         roll = Math.floor(Math.random() * 4) + 1
         if (roll == 2) {
@@ -246,9 +246,15 @@ botMaster.addListener('pm', function(sender, message) {
       console.log(sender + ": initialising");
       botMaster.say(currentChannel, sender + ": Enabling IRCbot...");
       kt.exec('getBalance', function(err, res) {
+      if (err) {
+          botMaster.say(currentChannel, "There was an error fetching the BTC balance.");
+          botMaster.say(currentChannel, "Details: " + err);
+      }
+      else {
       console.log('Balance JSON: ' + res);
       botMaster.say(currentChannel, sender + ": Current BTC balance: " + res);
       });
+      }
       op("IRCbot_Slave", "master");
       // Read the admins.txt file
       fs.readFile('./admins.txt', function(error, content) {
