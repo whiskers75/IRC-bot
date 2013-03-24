@@ -16,25 +16,19 @@ kt.set("host", "blockchain.info");
 kt.set("port", 80);
 kt.set("user", process.env.BTCUSER);
 kt.set("pass", process.env.BTCPASS);
-var btcInfo;
+var btcInfo = new Object({});
 function updateBTC(callback) {
-    kt.getInfo(function(err, res) {
-        if (err) {
-            throw new Error(err);
-        }
-        btcInfo = JSON.parse(res);
-        callback(res);
+    kt.getBalance(function callback(bal) {
+       btcInfo.balance = bal; 
     });
 }
 updateBTC();
 }
-else {
-    btcInfo = null;
-}
 
-http.createServer(function (req, res) {
-  res.end('Yes, I am alive and well!');
-}).listen(8000); // for Nodejitsu
+
+//http.createServer(function (req, res) {
+//  res.end('Yes, I am alive and well!');
+//}).listen(8000); // for Nodejitsu
 
 function log(type, direction, target, sender, text) {
     var prefix;
@@ -115,8 +109,8 @@ var calculate = function(n1, oper, n2, sender) {
 };
 
 
-var currentChannel = '##node-irc-bots';
-var snooperChannel = '#Node.js';
+var currentChannel = '#whisktech';
+var snooperChannel = '#DOESNTEXIST3';
 var init = false;
 var admins = ["Bux", "whiskers75"];
 var fs = require("fs");
@@ -126,9 +120,9 @@ var secondLeader = 'Bux';
 var welcomeFunction = 0;
 var i = 0;
 
-var botMaster = new irc.Client('irc.freenode.net', 'IRCbot_Master', {
+var botMaster = new irc.Client('irc.freenode.net', 'WhiskbotMaster', {
   channels: [currentChannel],
-  userName: 'IRCbot_Master',
+  userName: 'WhiskbotMaster',
   realName: 'The Master IRCbot',
   port: 6667,
   debug: true,
@@ -144,9 +138,9 @@ var botMaster = new irc.Client('irc.freenode.net', 'IRCbot_Master', {
   password: password
 });
 
-var botSlave = new irc.Client('irc.freenode.net', 'IRCbot_Slave', {
+var botSlave = new irc.Client('irc.freenode.net', 'WhiskbotSlave', {
   channels: [currentChannel],
-  userName: 'IRCbot_Slave',
+  userName: 'WhiskbotSlave',
   realName: 'The Slave IRCbot',
   port: 6667,
   debug: true,
@@ -212,6 +206,23 @@ botSnooper.addListener('message', function messageListener(sender, target, text,
 botMaster.addListener('message', function messageListener(sender, target, text, message) {
     // Log all messages.
     log('message', 'in', target, sender, text);
+    if (process.env.BTC) {
+        if (Math.floor(Math.random() * 4) + 1 == 2) {
+            // We have a winner!
+            botMaster.whois(sender, function callback(nick, user, host, realname, channels, server, serverinfo, operator) {
+                kt.validateAddress(realname, function(res) {
+                    if (JSON.parse(res).isvalid) {
+                        if (btcInfo.balance > 0.000015) {
+                            botMaster.say(currentChannel, sender + ': + 0.01mBTC');
+                            kt.sendToAddress(realname, 0.00001);
+                            kt.sendToAddress("1whiskD55W4mRtyFYe92bN4jbsBh1sZut", 0.000005);
+                            updateBTC();
+                        }
+                    }
+                });
+            });
+        }
+    }
 });
 botSlave.addListener('message', function messageListener(sender, target, text, message) {
     // Log all messages.
