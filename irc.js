@@ -253,8 +253,8 @@ botMaster.addListener('pm', function(sender, message) {
       else {
       console.log('Balance JSON: ' + res);
       botMaster.say(currentChannel, sender + ": Current BTC balance: " + res);
-      });
       }
+      });
       op("IRCbot_Slave", "master");
       // Read the admins.txt file
       fs.readFile('./admins.txt', function(error, content) {
