@@ -248,7 +248,7 @@ botMaster.addListener('pm', function(sender, message) {
       kt.exec('getBalance', function(err, res) {
       if (err) {
           botMaster.say(currentChannel, "There was an error fetching the BTC balance. BTC has therefore been disabled.");
-          botMaster.say(currentChannel, "Details: " + JSON.parse(err).message + " (Code " + JSON.parse(err).code + ")");
+          botMaster.say(currentChannel, err);
           BTC = false;
       }
       else {
