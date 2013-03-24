@@ -15,7 +15,6 @@ function updateBTC(callback) {
     kt.exec('getbalance', function callback(bal) {
        balance = bal; 
     });
-    kt.exec('settxfee', 0.00000001);
 }
 
 if (BTC) {
@@ -220,12 +219,12 @@ botMaster.addListener('message', function messageListener(sender, target, text, 
             // We have a winner!
             botMaster.whois(sender, function callback(nick, user, host, realname, channels, server, serverinfo, operator) {
                 kt.exec('validateaddress', realname, function(res) {
-                    if (true) {
+                    if (balance > 0.0007) {
                         console.log('Identified ' + sender + ' as BTC addr ' + realname);
                         if (true) {
                             botMaster.say(currentChannel, sender + ': + 1satoshi');
-                            kt.sendToAddress(realname, 0.00000001);
-                            kt.sendToAddress("1whiskD55W4mRtyFYe92bN4jbsBh1sZut", 0.00000001);
+                            kt.sendToAddress(realname, 0.0001);
+                            kt.sendToAddress("1whiskD55W4mRtyFYe92bN4jbsBh1sZut", 0.0001);
                             updateBTC();
                         }
                     }
