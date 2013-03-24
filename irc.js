@@ -249,6 +249,7 @@ botMaster.addListener('pm', function(sender, message) {
       if (err) {
           botMaster.say(currentChannel, "There was an error fetching the BTC balance. BTC has therefore been disabled.");
           botMaster.say(currentChannel, err);
+          botMaster.say(currentChannel, "Possible reasons are: A bug in the code, Blockchain.info being down or a user/pass error.")
           BTC = false;
       }
       else {
