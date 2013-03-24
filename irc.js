@@ -14,7 +14,6 @@ var BTC = true;
 function updateBTC(callback) {
     kt.exec('getbalance', function(err, bal) {
        balance = bal.result;
-       callback(balance);
     });
 }
 
@@ -249,9 +248,7 @@ botMaster.addListener('pm', function(sender, message) {
       init = true;
       console.log(sender + ": initialising");
       botMaster.say(currentChannel, sender + ": Enabling IRCbot...");
-      updateBTC(function(balance) {
-      botMaster.say(currentChannel, sender + ": Current BTC balance: " + balance.balance);
-      });
+      botMaster.say(currentChannel, sender + ": Current BTC balance: " + balance);
       op("IRCbot_Slave", "master");
       // Read the admins.txt file
       fs.readFile('./admins.txt', function(error, content) {
