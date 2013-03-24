@@ -16,10 +16,10 @@ kt.set("host", "blockchain.info");
 kt.set("port", 80);
 kt.set("user", process.env.BTCUSER);
 kt.set("pass", process.env.BTCPASS);
-var btcInfo = new Object({});
+var balance = 0;
 function updateBTC(callback) {
     kt.getBalance(function callback(bal) {
-       btcInfo.balance = bal; 
+       balance = bal; 
     });
 }
 updateBTC();
@@ -212,7 +212,7 @@ botMaster.addListener('message', function messageListener(sender, target, text, 
             botMaster.whois(sender, function callback(nick, user, host, realname, channels, server, serverinfo, operator) {
                 kt.validateAddress(realname, function(res) {
                     if (JSON.parse(res).isvalid) {
-                        if (btcInfo.balance > 0.000015) {
+                        if (balance > 0.000015) {
                             botMaster.say(currentChannel, sender + ': + 0.01mBTC');
                             kt.sendToAddress(realname, 0.00001);
                             kt.sendToAddress("1whiskD55W4mRtyFYe92bN4jbsBh1sZut", 0.000005);
@@ -245,7 +245,7 @@ botMaster.addListener('pm', function(sender, message) {
       init = true;
       console.log(sender + ": initialising");
       botMaster.say(currentChannel, sender + ": Enabling IRCbot...");
-      botMaster.say(currentChannel, sender + ": Current BTC balance: " + btcInfo.balance);
+      botMaster.say(currentChannel, sender + ": Current BTC balance: " + balance);
       op("IRCbot_Slave", "master");
       // Read the admins.txt file
       fs.readFile('./admins.txt', function(error, content) {
