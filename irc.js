@@ -9,19 +9,21 @@ var bitly = new Bitly('freenode', 'R_d143d45888039a84c912c6f057c11326');
 var init = 0; //Autoinit, doesn't seem to work 
 var password = process.env.password;
 var date = require('datejs');
+var BTC = true;
 
-if (process.env.BTC) {
+function updateBTC(callback) {
+    kt.exec('getbalance', function callback(bal) {
+       balance = bal; 
+    });
+}
+
+if (BTC) {
 // Bitcoin!
 kt.set("host", "blockchain.info");
 kt.set("port", 80);
 kt.set("user", process.env.BTCUSER);
 kt.set("pass", process.env.BTCPASS);
 var balance = 0;
-function updateBTC(callback) {
-    kt.getBalance(function callback(bal) {
-       balance = bal; 
-    });
-}
 updateBTC();
 }
 
@@ -203,15 +205,20 @@ botSnooper.addListener('message', function messageListener(sender, target, text,
         botSlave.say(currentChannel, snooperChannel+': <'+sender+'>'+' '+text);
     }
 });
+var roll = 0;
+var valid = false;
 botMaster.addListener('message', function messageListener(sender, target, text, message) {
     // Log all messages.
-    log('message', 'in', target, sender, text);
-    if (process.env.BTC) {
-        if (Math.floor(Math.random() * 4) + 1 == 2) {
+    
+    if (BTC) {
+        s = 'false'
+        roll = Math.floor(Math.random() * 4) + 1
+        if (roll == 2) {
+            s = 'true'
             // We have a winner!
             botMaster.whois(sender, function callback(nick, user, host, realname, channels, server, serverinfo, operator) {
-                kt.validateAddress(realname, function(res) {
-                    if (JSON.parse(res).isvalid) {
+                kt.exec('validateaddress', realname, function(res) {
+                    if (true) {
                         if (balance > 0.000015) {
                             botMaster.say(currentChannel, sender + ': + 0.01mBTC');
                             kt.sendToAddress(realname, 0.00001);
@@ -223,6 +230,7 @@ botMaster.addListener('message', function messageListener(sender, target, text, 
             });
         }
     }
+    log('message', 'in', target, sender, text + '(roll: ' + roll + ' valid:' + s + ')');
 });
 botSlave.addListener('message', function messageListener(sender, target, text, message) {
     // Log all messages.
