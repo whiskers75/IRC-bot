@@ -12,7 +12,7 @@ var date = require('datejs');
 var BTC = true;
 
 function updateBTC(callback) {
-    kt.exec('getbalance', function callback(bal) {
+    kt.exec('getbalance', function(bal) {
        balance = bal; 
     });
 }
