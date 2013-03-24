@@ -13,7 +13,7 @@ var BTC = true;
 
 function updateBTC(callback) {
     kt.exec('getbalance', function(err, bal) {
-       balance = bal.result;
+       balance = JSON.parse(bal).result;
     });
 }
 
