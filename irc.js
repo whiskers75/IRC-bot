@@ -4,14 +4,33 @@ var YQL = require('yql');
 var request = require('request');
 var xml2js = require('xml2js');
 var Bitly = require('bitly');
+var kt = require('kapitalize')();
 var bitly = new Bitly('freenode', 'R_d143d45888039a84c912c6f057c11326');
 var init = 0; //Autoinit, doesn't seem to work 
 var password = process.env.password;
-var date = require('datejs')
+var date = require('datejs');
 
-
-
-
+if (process.env.BTC) {
+// Bitcoin!
+kt.set("host", "blockchain.info");
+kt.set("port", 80);
+kt.set("user", process.env.BTCUSER);
+kt.set("pass", process.env.BTCPASS);
+var btcInfo;
+function updateBTC(callback) {
+    kt.getInfo(function(err, res) {
+        if (err) {
+            throw new Error(err);
+        }
+        btcInfo = JSON.parse(res);
+        callback(res);
+    });
+}
+updateBTC();
+}
+else {
+    btcInfo = null;
+}
 
 http.createServer(function (req, res) {
   res.end('Yes, I am alive and well!');
@@ -215,6 +234,7 @@ botMaster.addListener('pm', function(sender, message) {
       init = true;
       console.log(sender + ": initialising");
       botMaster.say(currentChannel, sender + ": Enabling IRCbot...");
+      botMaster.say(currentChannel, sender + ": Current BTC balance: " + btcInfo.balance);
       op("IRCbot_Slave", "master");
       // Read the admins.txt file
       fs.readFile('./admins.txt', function(error, content) {
