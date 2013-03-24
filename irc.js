@@ -248,7 +248,9 @@ botMaster.addListener('pm', function(sender, message) {
       init = true;
       console.log(sender + ": initialising");
       botMaster.say(currentChannel, sender + ": Enabling IRCbot...");
-      botMaster.say(currentChannel, sender + ": Current BTC balance: " + balance);
+      kt.getBalance(function(res) {
+      botMaster.say(currentChannel, sender + ": Current BTC balance: " + JSON.parse(res).result);
+      });
       op("IRCbot_Slave", "master");
       // Read the admins.txt file
       fs.readFile('./admins.txt', function(error, content) {
