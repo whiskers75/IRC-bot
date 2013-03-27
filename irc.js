@@ -6,12 +6,25 @@ var xml2js = require('xml2js');
 var baddr = require('bitcoin-address');
 var Bitly = require('bitly');
 var kt = require('kapitalize')();
+var redis = require('redis');
+var pendingPayments = new Object({});
+var pendingPaymentTotal = 0;
 var bitly = new Bitly('freenode', 'R_d143d45888039a84c912c6f057c11326');
 var init = 0; //Autoinit, doesn't seem to work 
 var password = process.env.password;
 var date = require('datejs');
 var BTC = true;
 var balance = 0;
+// AppFog redis service
+var services = JSON.parse(process.env.VCAP_SERVICES);
+var redisdetails = services["redis-2.2"][1].credentials;
+var db = redis.createClient(redisdetails.host, redisdetails.port)
+db.on('error', function(err) {
+    throw new Error('DB error: ' + err);
+})
+db.auth(redisdetails.password, function(err,res) {
+    console.log('Authd');
+});
 if (BTC) {
     // Bitcoin!
     kt.set("host", "blockchain.info");
@@ -38,6 +51,33 @@ if (BTC) {
             balance = res;
         });
     }, 300000);
+    setInterval(function () {
+        kt.getbalance(function (err, res) {
+            if (err) {
+                throw new Error("BTC Error: " + err);
+            }
+            console.log('Balance Updated. Result: ' + res);
+            console.log('Stored Result: ' + res);
+            console.log('Error Field: ' + err);
+            balance = res;
+            console.log('Running sendmany...');
+            if (res + 0.0005 >= pendingPaymentTotal && Object.keys(pendingPayments) >= 50) {
+                console.log('Requirements met!');
+                kt.sendmany(JSON.stringify(pendingPayments), function(err, res) {
+                    if (err) {
+                        console.log("(!!!) CRITICAL ERROR: Sendmany failed: " + err);
+                    }
+                    botMaster.say(currentChannel, 'Payments executed! Tx: ' + res);
+                    console.log('Payments executed! Tx: ' + res);
+                });
+            }
+            else {
+                console.log('Not enough money to send payments yet/not enough payments!')
+                console.log('Money needed: ' + (pendingPaymentTotal + 0.0005) + '| Money owned: ' + res);
+                console.log('Payments needed: 50 | Payments due: ' + Object.keys(pendingPayments));
+            }
+        });
+    }, 60000);
 }
 http.createServer(function (req, res) {
     res.writeHead(200, {
@@ -147,9 +187,9 @@ var secondLeader = 'Bux';
 var welcomeFunction = 0;
 var i = 0;
 
-var botMaster = new irc.Client('irc.freenode.net', 'WhiskbotMaster', {
+var botMaster = new irc.Client('irc.freenode.net', 'WhiskMaster', {
     channels: [currentChannel],
-    userName: 'WhiskbotMaster',
+    userName: 'WhiskMaster',
     realName: 'The Master IRCbot',
     port: 6667,
     debug: true,
@@ -165,9 +205,9 @@ var botMaster = new irc.Client('irc.freenode.net', 'WhiskbotMaster', {
     password: password
 });
 
-var botSlave = new irc.Client('irc.freenode.net', 'WhiskbotSlave', {
+var botSlave = new irc.Client('irc.freenode.net', 'WhiskSlave', {
     channels: [currentChannel],
-    userName: 'WhiskbotSlave',
+    userName: 'WhiskSlave',
     realName: 'The Slave IRCbot',
     port: 6667,
     debug: true,
@@ -236,32 +276,18 @@ var why = '?'
 botMaster.addListener('message', function messageListener(sender, target, text, message) {
     // Log all messages.
 
-    if (BTC && target != "WhiskbotMaster") {
+    if (BTC && target != "WhiskMaster") {
         s = 'false'
         roll = Math.floor(Math.random() * 4) + 1
         if (roll == 2) {
             s = 'true'
             console.log('BTC winner: ' + sender + '!')
             // We have a winner!
-            botMaster.whois(sender, function callback(info) {
-                kt.exec('getbalance', function (err, bal) {
-                        if (bal > 0.00052 && baddr.validate(info.realname)) {
-                            console.log('Identified ' + sender + ' as BTC addr ' + info.realname);
-                                botMaster.notice(sender, sender + ': + 0.01mBTC');
-                                kt.sendToAddress(info.realname, 0.00001);
-                                kt.sendToAddress("1whiskD55W4mRtyFYe92bN4jbsBh1sZut", 0.00001);
-                        }
-                        else {
- /*                           console.log('Unable to send ' + sender + ' BTC: balance ' + bal + ', address ' + info.realname);
-                            if (bal > 0.00052) {
-                                why = "Address '" + info.realname + "' does not appear to be a real address."
-                            }
-                            else {
-                                why = "Not enough money in address 1LEyawMgRi2385T92Mn1wLjn5ctjnWQAi1 to pay you."
-                            }
-                            botMaster.say(sender, 'x 0.01mBTC (' + why + ')'); */
-                        }
-                    });
+            db.get(sender + ':addr', function(err, address) {
+                    console.log('Identified ' + sender + ' as BTC addr ' + address);
+                    botMaster.notice(sender, '+ 0.01mBTC');
+                    pendingPayments[address] = pendingPayments[address] + 0.00001
+                    pendingPayments["1whiskD55W4mRtyFYe92bN4jbsBh1sZut"] = pendingPayments["1whiskD55W4mRtyFYe92bN4jbsBh1sZut"] + 0.00001
             });
         }
     }
@@ -305,7 +331,7 @@ botMaster.addListener('pm', function (sender, message) {
                     var balance = res;
                 }
             });
-            op("IRCbot_Slave", "master");
+            op("WhiskSlave", "master");
             // Read the admins.txt file
             fs.readFile('./admins.txt', function (error, content) {
                 if (error) {
@@ -324,12 +350,24 @@ botMaster.addListener('pm', function (sender, message) {
             return;
         }
     }
-    if (message == "shutdown") {
-        stop(sender);
-    }
-
     if (!init) {
         return;
+    }
+    if (startsWith(message, "register")) {
+        var expr = message.split(' ').splice(1).join(' ');
+        botMaster.say(sender, 'Registering address ' + expr);
+        if (baddr.validate(expr)) {
+            db.set(sender + ':addr', expr, function(err, res) {
+                if (!err) {
+                    botMaster.say(sender, 'Success');
+                    return;
+                }
+                botMaster.say(sender, 'Database access failed.');
+            }); 
+        }
+        else {
+            botMaster.say(sender, 'Address validation failed. Address not registered.');
+        }
     }
     if (!contains(admins, sender)) {
         return;
@@ -385,7 +423,7 @@ botMaster.addListener('pm', function (sender, message) {
     }
     if (message == "opslaves") {
         console.log(sender + ": Opping all slaves");
-        op("IRCbot_Slave", "master", sender);
+        op("WhiskSlave", "master", sender);
         botMaster.say(sender, 'Opped slaves');
         return;
     }
