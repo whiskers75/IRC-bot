@@ -72,7 +72,7 @@ if (BTC) {
             logger.info('Error Field: ' + err);
             balance = res;
             logger.info('Running sendmany...');
-            if (res + 0.0005 >= pendingPaymentTotal && Object.keys(pendingPayments).length >= 50) {
+            if (res + 0.0005 >= pendingPaymentTotal && Object.keys(pendingPayments).length >= process.env.PAYOUTVALUE) {
                 logger.info('Requirements met!');
                 kt.sendmany(JSON.stringify(pendingPayments), function(err, res) {
                     if (err) {
@@ -85,7 +85,7 @@ if (BTC) {
             else {
                 logger.notice('Not enough money to send payments yet/not enough payments!')
                 logger.notice('Money needed: ' + (pendingPaymentTotal + 0.0005) + '| Money owned: ' + res);
-                logger.notice('Payments needed: 50 | Payments due: ' + Object.keys(pendingPayments).length);
+                logger.notice('Payments needed: ' + process.env.PAYOUTVALUE + ' | Payments due: ' + Object.keys(pendingPayments).length);
             }
         });
     }, 60000);
