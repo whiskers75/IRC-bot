@@ -17,7 +17,7 @@ var BTC = true;
 var balance = 0;
 // AppFog redis service
 var services = JSON.parse(process.env.VCAP_SERVICES);
-var redisdetails = services["redis-2.2"][1].credentials;
+var redisdetails = services["redis-2.2"][0].credentials;
 var db = redis.createClient(redisdetails.host, redisdetails.port)
 db.on('error', function(err) {
     throw new Error('DB error: ' + err);
