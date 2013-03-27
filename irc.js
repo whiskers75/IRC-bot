@@ -23,6 +23,14 @@ kt.getbalance(function(err, res) {
     }
     var balance = res.result;
 });
+setInterval(function() {
+    kt.getbalance(function(err, res) {
+    if (err) {
+        throw new Error("BTC Error: " + err);
+    }
+    var balance = res.result;
+}, 300000);
+})
 }
 http.createServer(function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain'});
