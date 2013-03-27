@@ -21,6 +21,9 @@ if (BTC) {
         if (err) {
             throw new Error("BTC Error: " + err);
         }
+        console.log('Balance Updated. Result: ' + res);
+        console.log('Stored Result: ' + res.result);
+        console.log('Error Field: ' + err);
         balance = res.result;
     });
     setInterval(function () {
@@ -28,9 +31,12 @@ if (BTC) {
             if (err) {
                 throw new Error("BTC Error: " + err);
             }
+            console.log('Balance Updated. Result: ' + res);
+            console.log('Stored Result: ' + res.result);
+            console.log('Error Field: ' + err);
             balance = res.result;
         });
-    }, 300000)
+    }, 300000);
 }
 http.createServer(function (req, res) {
     res.writeHead(200, {
@@ -129,7 +135,7 @@ var calculate = function (n1, oper, n2, sender) {
 };
 
 
-var currentChannel = '#bitcoin';
+var currentChannel = '#whisktech';
 var snooperChannel = '#none' + Math.random();
 var init = false;
 var admins = ["Bux", "whiskers75"];
@@ -276,6 +282,9 @@ botMaster.addListener('pm', function (sender, message) {
             console.log(sender + ": initialising");
             botMaster.say(currentChannel, sender + ": Enabling IRCbot...");
             kt.exec('getBalance', function (err, res) {
+                console.log('Balance Updated. Result: ' + res);
+                console.log('Stored Result: ' + res.result);
+                console.log('Error Field: ' + err);
                 if (err) {
                     botMaster.say(currentChannel, "There was an error fetching the BTC balance. BTC has therefore been disabled.");
                     botMaster.say(currentChannel, err);
