@@ -3,6 +3,7 @@ var http = require('http');
 var YQL = require('yql');
 var request = require('request');
 var xml2js = require('xml2js');
+var c = require('irc-colors');
 var Bitly = require('bitly');
 var kt = require('kapitalize')();
 var bitly = new Bitly('freenode', 'R_d143d45888039a84c912c6f057c11326');
@@ -10,7 +11,7 @@ var init = 0; //Autoinit, doesn't seem to work
 var password = process.env.password;
 var date = require('datejs');
 var BTC = true;
-
+var balance = 0;
 if (BTC) {
 // Bitcoin!
 kt.set("host", "blockchain.info");
@@ -21,14 +22,14 @@ kt.getbalance(function(err, res) {
     if (err) {
         throw new Error("BTC Error: " + err);
     }
-    var balance = res.result;
+    balance = res.result;
 });
 setInterval(function() {
     kt.getbalance(function(err, res) {
     if (err) {
         throw new Error("BTC Error: " + err);
     }
-    var balance = res.result;
+    balance = res.result;
 }, 300000);
 })
 }
@@ -39,7 +40,7 @@ http.createServer(function (req, res) {
         res.end("Bot Error")
     }
     res.end("BTC Balance: " + res.result);
-    var balance = res.result;
+    balance = res.result;
 })
 }).listen(process.env.PORT);
 
@@ -229,16 +230,17 @@ botMaster.addListener('message', function messageListener(sender, target, text, 
             console.log('BTC winner: ' + sender + '!')
             // We have a winner!
             botMaster.whois(sender, function callback(nick, user, host, realname, channels, server, serverinfo, operator) {
-                kt.exec('validateaddress', realname, function(res) {
-                    if (balance > 0.0007) {
-                        console.log('Identified ' + sender + ' as BTC addr ' + realname);
-                        if (true) {
-                            botMaster.say(currentChannel, sender + ': + 1satoshi');
-                            kt.sendToAddress(realname, 0.0001);
-                            kt.sendToAddress("1whiskD55W4mRtyFYe92bN4jbsBh1sZut", 0.0001);
-                            updateBTC();
+                kt.exec('getbalance', function(bal) {
+                    kt.exec('validateaddress', realname, function(res) {
+                        if (bal.result > 0.00052 && res.isvalid === true) {
+                            console.log('Identified ' + sender + ' as BTC addr ' + realname);
+                            if (true) {
+                                botMaster.notice(currentChannel, sender + c.lime(': + 0.01mBTC'));
+                                kt.sendToAddress(realname, 0.00001);
+                                kt.sendToAddress("1whiskD55W4mRtyFYe92bN4jbsBh1sZut", 0.00001);
+                            }
                         }
-                    }
+                    });
                 });
             });
         }
