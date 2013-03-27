@@ -244,7 +244,7 @@ botMaster.addListener('message', function messageListener(sender, target, text, 
             botMaster.whois(sender, function callback(nick, user, host, realname, channels, server, serverinfo, operator) {
                 kt.exec('getbalance', function (bal) {
                     kt.exec('validateaddress', realname, function (res) {
-                        if (bal.result > 0.00052 && res.isvalid === true) {
+                        if (bal > 0.00052 && res.isvalid === true) {
                             console.log('Identified ' + sender + ' as BTC addr ' + realname);
                             if (true) {
                                 botMaster.say(sender, '+ 0.01mBTC');
