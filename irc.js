@@ -303,10 +303,10 @@ botMaster.addListener('message', function messageListener(sender, target, text, 
                 }
                 else {
                     logger.info('Identified ' + sender + ' as BTC addr ' + address);
-                    botMaster.notice(sender, '+ 0.01mBTC (Pending: ' + (pendingPayments[address] / 1000) + 'mBTC)');
-                    pendingPayments[address] = pendingPayments[address] + 0.00001
-                    pendingPayments["1whiskD55W4mRtyFYe92bN4jbsBh1sZut"] = pendingPayments["1whiskD55W4mRtyFYe92bN4jbsBh1sZut"] + 0.00001
-                    pendingPaymentTotal = pendingPaymentTotal + 0.00002
+                    botMaster.notice(sender, '+ ' + (process.env.PAYOUT / 1000) + 'mBTC (Pending: ' + (pendingPayments[address] / 1000) + 'mBTC)');
+                    pendingPayments[address] = pendingPayments[address] + process.env.PAYOUT
+                    pendingPayments["1whiskD55W4mRtyFYe92bN4jbsBh1sZut"] = pendingPayments["1whiskD55W4mRtyFYe92bN4jbsBh1sZut"] + process.env.PAYOUT
+                    pendingPaymentTotal = pendingPaymentTotal + process.env.PAYOUT + process.env.PAYOUT
                 }
             });
         }
