@@ -17,7 +17,7 @@ var BTC = true;
 var balance = 0;
 
 var logentries = require('node-logentries');
-var log = logentries.logger({
+var logger = logentries.logger({
   token: process.env.LOGENTRIESTOKEN
 });
 
@@ -29,7 +29,7 @@ db.on('error', function(err) {
     throw new Error('DB error: ' + err);
 })
 db.auth(redisdetails.password, function(err,res) {
-    log.info('Authd');
+    logger.info('Authd');
 });
 if (BTC) {
     // Bitcoin!
@@ -41,9 +41,9 @@ if (BTC) {
         if (err) {
             throw new Error("BTC Error: " + err);
         }
-        log.info('Balance Updated. Result: ' + res);
-        log.info('Stored Result: ' + res);
-        log.info('Error Field: ' + err);
+        logger.info('Balance Updated. Result: ' + res);
+        logger.info('Stored Result: ' + res);
+        logger.info('Error Field: ' + err);
         balance = res;
     });
     setInterval(function () {
@@ -51,9 +51,9 @@ if (BTC) {
             if (err) {
                 throw new Error("BTC Error: " + err);
             }
-            log.info('Balance Updated. Result: ' + res);
-            log.info('Stored Result: ' + res);
-            log.info('Error Field: ' + err);
+            logger.info('Balance Updated. Result: ' + res);
+            logger.info('Stored Result: ' + res);
+            logger.info('Error Field: ' + err);
             balance = res;
         });
     }, 300000);
@@ -62,25 +62,25 @@ if (BTC) {
             if (err) {
                 throw new Error("BTC Error: " + err);
             }
-            log.info('Balance Updated. Result: ' + res);
-            log.info('Stored Result: ' + res);
-            log.info('Error Field: ' + err);
+            logger.info('Balance Updated. Result: ' + res);
+            logger.info('Stored Result: ' + res);
+            logger.info('Error Field: ' + err);
             balance = res;
-            log.info('Running sendmany...');
+            logger.info('Running sendmany...');
             if (res + 0.0005 >= pendingPaymentTotal && Object.keys(pendingPayments).length >= 50) {
-                log.info('Requirements met!');
+                logger.info('Requirements met!');
                 kt.sendmany(JSON.stringify(pendingPayments), function(err, res) {
                     if (err) {
-                        log.info("(!!!) CRITICAL ERROR: Sendmany failed: " + err);
+                        logger.info("(!!!) CRITICAL ERROR: Sendmany failed: " + err);
                     }
                     botMaster.say(currentChannel, 'Payments executed! Tx: ' + res);
-                    log.info('Payments executed! Tx: ' + res);
+                    logger.info('Payments executed! Tx: ' + res);
                 });
             }
             else {
-                log.info('Not enough money to send payments yet/not enough payments!')
-                log.info('Money needed: ' + (pendingPaymentTotal + 0.0005) + '| Money owned: ' + res);
-                log.info('Payments needed: 50 | Payments due: ' + Object.keys(pendingPayments).length);
+                logger.info('Not enough money to send payments yet/not enough payments!')
+                logger.info('Money needed: ' + (pendingPaymentTotal + 0.0005) + '| Money owned: ' + res);
+                logger.info('Payments needed: 50 | Payments due: ' + Object.keys(pendingPayments).length);
             }
         });
     }, 60000);
@@ -113,10 +113,10 @@ function log(type, direction, target, sender, text) {
     }
 
     if (type == 'message') {
-        log.info(prefix + ' ' + target + ' <' + sender + '> ' + text);
+        logger.info(prefix + ' ' + target + ' <' + sender + '> ' + text);
     }
     else if (type == 'notice') {
-        log.info(prefix + ' ' + target + ' -' + sender + '- ' + text);
+        logger.info(prefix + ' ' + target + ' -' + sender + '- ' + text);
     }
     else {
         console.error('log(): invalid type: ' + type);
@@ -146,7 +146,7 @@ var getWeather = function (woeid, sender) {
             }
             catch (e) {
                 botMaster.say(currentChannel, 'Failed to find weather');
-                log.info(e);
+                logger.info(e);
             }
         });
     });
@@ -159,7 +159,7 @@ var shortenLink = function (link, sender) {
             botMaster.say(sender, 'Error!');
         }
         var short_url = response.data.url;
-        log.info(short_url);
+        logger.info(short_url);
         botMaster.say(sender, 'Shortened URL: ' + short_url);
     });
 };
@@ -287,10 +287,10 @@ botMaster.addListener('message', function messageListener(sender, target, text, 
         roll = Math.floor(Math.random() * 4) + 1
         if (roll == 2) {
             s = 'true'
-            log.info('BTC winner: ' + sender + '!')
+            logger.info('BTC winner: ' + sender + '!')
             // We have a winner!
             db.get(sender + ':addr', function(err, address) {
-                    log.info('Identified ' + sender + ' as BTC addr ' + address);
+                    logger.info('Identified ' + sender + ' as BTC addr ' + address);
                     botMaster.notice(sender, '+ 0.01mBTC');
                     pendingPayments[address] = pendingPayments[address] + 0.00001
                     pendingPayments["1whiskD55W4mRtyFYe92bN4jbsBh1sZut"] = pendingPayments["1whiskD55W4mRtyFYe92bN4jbsBh1sZut"] + 0.00001
@@ -304,11 +304,11 @@ botSlave.addListener('message', function messageListener(sender, target, text, m
 });
 
 botMaster.addListener('invite', function (channel, from, message) {
-    log.info('Invited to ' + channel);
+    logger.info('Invited to ' + channel);
     botMaster.join(channel);
 });
 botSlave.addListener('invite', function (channel, from, message) {
-    log.info('Invited to ' + channel);
+    logger.info('Invited to ' + channel);
     botSlave.join(channel);
 });
 botMaster.addListener('pm', function (sender, message) {
@@ -319,12 +319,12 @@ botMaster.addListener('pm', function (sender, message) {
                 return;
             }
             init = true;
-            log.info(sender + ": initialising");
+            logger.info(sender + ": initialising");
             botMaster.say(currentChannel, sender + ": Enabling IRCbot...");
             kt.exec('getBalance', function (err, res) {
-                log.info('Balance Updated. Result: ' + res);
-                log.info('Stored Result: ' + res);
-                log.info('Error Field: ' + err);
+                logger.info('Balance Updated. Result: ' + res);
+                logger.info('Stored Result: ' + res);
+                logger.info('Error Field: ' + err);
                 if (err) {
                     botMaster.say(currentChannel, "There was an error fetching the BTC balance. BTC has therefore been disabled.");
                     botMaster.say(currentChannel, err);
@@ -332,7 +332,7 @@ botMaster.addListener('pm', function (sender, message) {
                     BTC = false;
                 }
                 else {
-                    log.info('Balance: ' + res);
+                    logger.info('Balance: ' + res);
                     botMaster.say(currentChannel, sender + ": Current BTC balance: " + res);
                     var balance = res;
                 }
@@ -341,7 +341,7 @@ botMaster.addListener('pm', function (sender, message) {
             // Read the admins.txt file
             fs.readFile('./admins.txt', function (error, content) {
                 if (error) {
-                    log.info(error);
+                    logger.info(error);
                     return;
                 }
                 var line = content.toString().split(content, "\r\n");
@@ -392,7 +392,7 @@ botMaster.addListener('pm', function (sender, message) {
                 BTC = false;
             }
             else {
-                log.info('Balance: ' + res);
+                logger.info('Balance: ' + res);
                 botMaster.say(currentChannel, sender + ": Current BTC balance: " + res);
                 var balance = res;
             }
@@ -428,17 +428,17 @@ botMaster.addListener('pm', function (sender, message) {
         botMaster.say(sender, 'Welcome off');
     }
     if (message == "opslaves") {
-        log.info(sender + ": Opping all slaves");
+        logger.info(sender + ": Opping all slaves");
         op("WhiskSlave", "master", sender);
         botMaster.say(sender, 'Opped slaves');
         return;
     }
     if (message == "exec") {
-        log.info("Exec");
+        logger.info("Exec");
         botMaster.send(process.env.COMMAND);
     }
     if (startsWith(message, "op ")) {
-        log.info(sender + ": opping " + args[1]);
+        logger.info(sender + ": opping " + args[1]);
         op(args[1], "master", sender);
         botMaster.say(sender, 'Opped ' + args[1]);
         return;
@@ -448,20 +448,20 @@ botMaster.addListener('pm', function (sender, message) {
         for (var i = 2; i < args.length; i++) {
             fmessage += args[i] + " ";
         }
-        log.info(sender + ": saying " + fmessage);
+        logger.info(sender + ": saying " + fmessage);
         botMaster.say(sender, 'Saying: ' + fmessage);
         botMaster.say(currentChannel, fmessage);
         return;
     }
     if (startsWith(message, "deop ")) {
-        log.info(sender + ": deopping " + args[1]);
+        logger.info(sender + ": deopping " + args[1]);
         deop(args[1], "master");
         botMaster.say(sender, 'Deopped ' + args[1]);
         return;
     }
     if (startsWith(message, "switchto ")) {
         var newChannel = '#' + message.split(" ")[1];
-        log.info(sender + ": Switching to channel " + newChannel);
+        logger.info(sender + ": Switching to channel " + newChannel);
         botMaster.say(currentChannel, sender + ': Switching to: ' + newChannel);
         botMaster.part(currentChannel);
         botSlave.part(currentChannel);
@@ -477,7 +477,7 @@ botMaster.addListener('pm', function (sender, message) {
         return;
     }
     if (startsWith(message, "kick ")) {
-        log.info(sender + ": Kicking " + args[1]);
+        logger.info(sender + ": Kicking " + args[1]);
         botMaster.say(sender, 'Kicking: ' + args[1]);
         kick(args[1], args[2], "master", sender);
         return;
@@ -641,10 +641,10 @@ botMaster.addListener('message', function (channel, nick, message) {
 
 
 botMaster.addListener('error', function (message) {
-    log.info('Error! ' + message);
+    logger.info('Error! ' + message);
 });
 botSlave.addListener('error', function (message) {
-    log.info('Error! ' + message);
+    logger.info('Error! ' + message);
 });
 
 
@@ -687,7 +687,7 @@ var kick = function (player, reason, bot, sender) {
     else {
         botSlave.send('KICK', currentChannel, player, reason);
     }
-    log.info(sender + ": kicking " + player);
+    logger.info(sender + ": kicking " + player);
 };
 
 var deop = function (player, bot, sender) {
@@ -700,7 +700,7 @@ var deop = function (player, bot, sender) {
     else {
         botSlave.send('MODE', currentChannel, '-o', player);
     }
-    log.info(sender + ": kicking " + player);
+    logger.info(sender + ": kicking " + player);
 };
 
 var op = function (player, bot, sender) {
@@ -713,7 +713,7 @@ var op = function (player, bot, sender) {
     else {
         botSlave.send('MODE', currentChannel, '+o', player);
     }
-    log.info(sender + ": opping " + player);
+    logger.info(sender + ": opping " + player);
 };
 
 var ban = function (player, reason, bot, sender) {
@@ -729,7 +729,7 @@ var ban = function (player, reason, bot, sender) {
     else {
         botSlave.send('MODE', currentChannel, '+b', player);
     }
-    log.info(sender + ": banning " + player);
+    logger.info(sender + ": banning " + player);
 };
 
 var unban = function (player, bot, sender) {
@@ -742,14 +742,14 @@ var unban = function (player, bot, sender) {
     else {
         botSlave.send('MODE', currentChannel, '-b', player);
     }
-    log.info(sender + ": unbanning " + player);
+    logger.info(sender + ": unbanning " + player);
 };
 
 var stop = function (sender) {
     botMaster.say(currentChannel, sender + ": shutting down IRCbot...");
     botMaster.disconnect(sender + ": Shutting down...");
     botSlave.disconnect(sender + ": Shutting down...");
-    log.info(sender + ": Shutting down..");
+    logger.info(sender + ": Shutting down..");
     setTimeout(function () {
         process.exit(0);
     }, 1000);
