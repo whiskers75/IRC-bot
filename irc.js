@@ -17,26 +17,26 @@ if (BTC) {
     kt.set("port", 80);
     kt.set("user", process.env.BTCUSER);
     kt.set("pass", process.env.BTCPASS);
-    kt.getbalance(function(err, res) {
+    kt.getbalance(function (err, res) {
         if (err) {
             throw new Error("BTC Error: " + err);
         }
         balance = res.result;
     });
-    setInterval(function() {
-        kt.getbalance(function(err, res) {
+    setInterval(function () {
+        kt.getbalance(function (err, res) {
             if (err) {
                 throw new Error("BTC Error: " + err);
             }
             balance = res.result;
-        }, 300000);
-    })
+        });
+    }, 300000)
 }
-http.createServer(function(req, res) {
+http.createServer(function (req, res) {
     res.writeHead(200, {
         'Content-Type': 'text/plain'
     });
-    kt.getbalance(function(err, res) {
+    kt.getbalance(function (err, res) {
         if (err) {
             res.end("Bot Error")
         }
@@ -77,12 +77,12 @@ process.stdin.resume();
 process.stdin.setEncoding('utf8');
 process.stdin.setRawMode(true);
 */
-var getWeather = function(woeid, sender) {
+var getWeather = function (woeid, sender) {
     var url = 'http://weather.yahooapis.com/forecastrss?w=' + woeid + '&u=c';
 
-    request(url, function(error, res, body) {
+    request(url, function (error, res, body) {
         var parser = new xml2js.Parser();
-        parser.parseString(body, function(err, result) {
+        parser.parseString(body, function (err, result) {
 
             try {
                 var condition = result.channel.item['yweather:condition']['@'];
@@ -100,8 +100,8 @@ var getWeather = function(woeid, sender) {
 };
 
 
-var shortenLink = function(link, sender) {
-    bitly.shorten(link, function(err, response) {
+var shortenLink = function (link, sender) {
+    bitly.shorten(link, function (err, response) {
         if (err) {
             botMaster.say(sender, 'Error!');
         }
@@ -111,7 +111,7 @@ var shortenLink = function(link, sender) {
     });
 };
 
-var calculate = function(n1, oper, n2, sender) {
+var calculate = function (n1, oper, n2, sender) {
     var ans = 0;
     if (oper == 'add') {
         ans = parseInt(n1, 10) + parseInt(n2, 10);
@@ -175,7 +175,7 @@ var botSlave = new irc.Client('irc.freenode.net', 'WhiskbotSlave', {
     stripColors: false,
     password: password
 });
-var newSnooper = function(channel, name) {
+var newSnooper = function (channel, name) {
     var newsnooper = new irc.Client('irc.freenode.net', name, {
         channels: [channel],
         userName: name,
@@ -236,8 +236,8 @@ botMaster.addListener('message', function messageListener(sender, target, text, 
             console.log('BTC winner: ' + sender + '!')
             // We have a winner!
             botMaster.whois(sender, function callback(nick, user, host, realname, channels, server, serverinfo, operator) {
-                kt.exec('getbalance', function(bal) {
-                    kt.exec('validateaddress', realname, function(res) {
+                kt.exec('getbalance', function (bal) {
+                    kt.exec('validateaddress', realname, function (res) {
                         if (bal.result > 0.00052 && res.isvalid === true) {
                             console.log('Identified ' + sender + ' as BTC addr ' + realname);
                             if (true) {
@@ -257,15 +257,15 @@ botSlave.addListener('message', function messageListener(sender, target, text, m
     // Log all messages.
 });
 
-botMaster.addListener('invite', function(channel, from, message) {
+botMaster.addListener('invite', function (channel, from, message) {
     console.log('Invited to ' + channel);
     botMaster.join(channel);
 });
-botSlave.addListener('invite', function(channel, from, message) {
+botSlave.addListener('invite', function (channel, from, message) {
     console.log('Invited to ' + channel);
     botSlave.join(channel);
 });
-botMaster.addListener('pm', function(sender, message) {
+botMaster.addListener('pm', function (sender, message) {
     var args = message.split(" ");
     if (message == "init") {
         if (!init) {
@@ -275,7 +275,7 @@ botMaster.addListener('pm', function(sender, message) {
             init = true;
             console.log(sender + ": initialising");
             botMaster.say(currentChannel, sender + ": Enabling IRCbot...");
-            kt.exec('getBalance', function(err, res) {
+            kt.exec('getBalance', function (err, res) {
                 if (err) {
                     botMaster.say(currentChannel, "There was an error fetching the BTC balance. BTC has therefore been disabled.");
                     botMaster.say(currentChannel, err);
@@ -290,7 +290,7 @@ botMaster.addListener('pm', function(sender, message) {
             });
             op("IRCbot_Slave", "master");
             // Read the admins.txt file
-            fs.readFile('./admins.txt', function(error, content) {
+            fs.readFile('./admins.txt', function (error, content) {
                 if (error) {
                     console.log(error);
                     return;
@@ -323,7 +323,7 @@ botMaster.addListener('pm', function(sender, message) {
         init = false;
     }
     if (message == "balance") {
-        kt.exec('getBalance', function(err, res) {
+        kt.exec('getBalance', function (err, res) {
             if (err) {
                 botMaster.say(currentChannel, "There was an error fetching the BTC balance. BTC has therefore been disabled.");
                 botMaster.say(currentChannel, err);
@@ -434,7 +434,7 @@ botMaster.addListener('pm', function(sender, message) {
         else if (args[1] == "remove") {
             admins.splice(admins.indexOf(args[2]), 1);
             var newadmins = [];
-            fs.readFile('./admins.txt', function(error, content) {
+            fs.readFile('./admins.txt', function (error, content) {
                 var line = line.split(content, "\r\n");
                 if (line != args[2]) {
                     newadmins[newadmins.length] = line;
@@ -477,13 +477,13 @@ function ctcpreply(target, request, reply) {
     botMaster.notice(target, '\x01' + request + ' ' + reply + '\x01');
 }
 
-botMaster.addListener('join', function(channel, nick, message) {
+botMaster.addListener('join', function (channel, nick, message) {
     if (welcomeFunction == 1) {
         if ((nick != "IRCbot_Master") && (nick != "IRCbot_Slave")) {
             botMaster.say(channel, "Welcome, " + nick + " to " + currentChannel);
         }
     }
-    setTimeout(function() {
+    setTimeout(function () {
         if (nick == leader) {
             op(leader, "master", leader);
         }
@@ -498,22 +498,22 @@ botMaster.addListener('join', function(channel, nick, message) {
 ////////////////////////////
 ////////////////////////////
 
-botMaster.addListener('-mode', function(channel, by, mode, argument, message) {
+botMaster.addListener('-mode', function (channel, by, mode, argument, message) {
     if (mode == 'o' && argument == "IRCbot_Slave") {
         botMaster.say('ops plz'); // for -oo 's
         op("IRCbot_Slave", "master", "IRCbot_Master");
-        setTimeout(function() {
+        setTimeout(function () {
             ban(by, "Disconnected by admin.", "master", "IRCbot_Master");
         }, 1200);
         nemesis = by;
         botMaster.say(channel, by + " has been banned for deopping IRC bots!");
     }
 });
-botSlave.addListener('-mode', function(channel, by, mode, argument, message) {
+botSlave.addListener('-mode', function (channel, by, mode, argument, message) {
     if (mode == 'o' && argument == "IRCbot_Master") {
         botSlave.say('ops plz');
         op("IRCbot_Master", "slave", "IRCbot_Slave");
-        setTimeout(function() {
+        setTimeout(function () {
             ban(by, "Disconnected by admin.", "slave", "IRCbot_Slave");
         }, 1200);
         nemesis = by;
@@ -521,7 +521,7 @@ botSlave.addListener('-mode', function(channel, by, mode, argument, message) {
     }
 });
 ////
-botMaster.addListener('+mode', function(channel, by, mode, argument, message) {
+botMaster.addListener('+mode', function (channel, by, mode, argument, message) {
     if (mode == 'b' && argument == "IRCbot_Slave") {
         botMaster.send('MODE', channel, '-b', "IRCbot_Slave");
         ban(by, "Disconnected by admin.", "master", "IRCbot_Master");
@@ -529,7 +529,7 @@ botMaster.addListener('+mode', function(channel, by, mode, argument, message) {
         botSlave.say(channel, by + " has been banned for attempting to ban IRC bots!");
     }
 });
-botSlave.addListener('+mode', function(channel, by, mode, argument, message) {
+botSlave.addListener('+mode', function (channel, by, mode, argument, message) {
     if (mode == 'b' && argument == "IRCbot_Master") {
         unban("IRCbot_Master", "slave", "IRCbot_Slave");
         ban(by, "Disconnected by admin.", "slave", "IRCbot_Slave");
@@ -538,14 +538,14 @@ botSlave.addListener('+mode', function(channel, by, mode, argument, message) {
     }
 });
 ////
-botMaster.addListener('kick', function(channel, nick, by, reason, message) {
+botMaster.addListener('kick', function (channel, nick, by, reason, message) {
     if (nick == "IRCbot_Slave") {
         ban(by, "Kicking IRC bots.", "master", "IRCbot_Master");
         nemesis = by;
         botSlave.say(channel, by + " has been banned for kicking IRC bots!");
     }
 });
-botSlave.addListener('kick', function(channel, nick, by, reason, message) {
+botSlave.addListener('kick', function (channel, nick, by, reason, message) {
     if (nick == "IRCbot_Master") {
         botSlave.send('ops plz');
         ban(by, "Kicking IRC bots.", "slave", "IRCbot_Slave");
@@ -553,7 +553,7 @@ botSlave.addListener('kick', function(channel, nick, by, reason, message) {
     }
 });
 
-botMaster.addListener('message', function(channel, nick, message) {
+botMaster.addListener('message', function (channel, nick, message) {
     if (message == "!help") {
         botMaster.say(nick, 'Help:');
         botMaster.say(nick, '!rules lists rules.');
@@ -579,10 +579,10 @@ botMaster.addListener('message', function(channel, nick, message) {
 
 
 
-botMaster.addListener('error', function(message) {
+botMaster.addListener('error', function (message) {
     console.log('Error! ' + message);
 });
-botSlave.addListener('error', function(message) {
+botSlave.addListener('error', function (message) {
     console.log('Error! ' + message);
 });
 
@@ -590,7 +590,7 @@ botSlave.addListener('error', function(message) {
 //////////////////////////////
 //////////////////////////////
 
-process.stdin.on('data', function(key) {
+process.stdin.on('data', function (key) {
     // listen for Ctrl + C
     if (key == '\3') {
         process.exit();
@@ -598,11 +598,11 @@ process.stdin.on('data', function(key) {
 
 });
 
-var startsWith = function(superstr, str) {
+var startsWith = function (superstr, str) {
     return !superstr.indexOf(str);
 };
 
-var contains = function(a, obj) {
+var contains = function (a, obj) {
     for (var i = 0; i < a.length; i++) {
         if (a[i] === obj) {
             return true;
@@ -612,7 +612,7 @@ var contains = function(a, obj) {
 };
 
 
-var kick = function(player, reason, bot, sender) {
+var kick = function (player, reason, bot, sender) {
     if (!bot) {
         bot = "master";
     }
@@ -629,7 +629,7 @@ var kick = function(player, reason, bot, sender) {
     console.log(sender + ": kicking " + player);
 };
 
-var deop = function(player, bot, sender) {
+var deop = function (player, bot, sender) {
     if (!bot) {
         bot = "master";
     }
@@ -642,7 +642,7 @@ var deop = function(player, bot, sender) {
     console.log(sender + ": kicking " + player);
 };
 
-var op = function(player, bot, sender) {
+var op = function (player, bot, sender) {
     if (!bot) {
         bot = "master";
     }
@@ -655,7 +655,7 @@ var op = function(player, bot, sender) {
     console.log(sender + ": opping " + player);
 };
 
-var ban = function(player, reason, bot, sender) {
+var ban = function (player, reason, bot, sender) {
     if (!bot) {
         bot = "master";
     }
@@ -671,7 +671,7 @@ var ban = function(player, reason, bot, sender) {
     console.log(sender + ": banning " + player);
 };
 
-var unban = function(player, bot, sender) {
+var unban = function (player, bot, sender) {
     if (!bot) {
         bot = "master";
     }
@@ -684,12 +684,12 @@ var unban = function(player, bot, sender) {
     console.log(sender + ": unbanning " + player);
 };
 
-var stop = function(sender) {
+var stop = function (sender) {
     botMaster.say(currentChannel, sender + ": shutting down IRCbot...");
     botMaster.disconnect(sender + ": Shutting down...");
     botSlave.disconnect(sender + ": Shutting down...");
     console.log(sender + ": Shutting down..");
-    setTimeout(function() {
+    setTimeout(function () {
         process.exit(0);
     }, 1000);
 };
