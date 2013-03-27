@@ -90,7 +90,7 @@ http.createServer(function (req, res) {
         res.end("BTC Balance: " + res);
         balance = res;
     })
-}).listen(process.env.PORT);
+}).listen(process.env.VCAP_APP_PORT);
 
 function log(type, direction, target, sender, text) {
     var prefix;
