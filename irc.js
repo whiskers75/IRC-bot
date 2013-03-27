@@ -286,6 +286,21 @@ botMaster.addListener('pm', function(sender, message) {
     botMaster.say(currentChannel, sender  + ": disabling IRCbot...");
 	init = false;
   }
+  if(message == "balance") {
+      kt.exec('getBalance', function(err, res) {
+          if (err) {
+              botMaster.say(currentChannel, "There was an error fetching the BTC balance. BTC has therefore been disabled.");
+              botMaster.say(currentChannel, err);
+              botMaster.say(currentChannel, "Possible reasons are: A bug in the code, Blockchain.info being down or a user/pass error.")
+              BTC = false;
+          }
+          else {
+              console.log('Balance: ' + res.result);
+              botMaster.say(currentChannel, sender + ": Current BTC balance: " + res.result);
+              var balance = res.result;
+          }
+      });
+  }
   if(startsWith(message, 'eval ')) {
       var expr = message.split(' ').splice(1).join(' ');
       try {
