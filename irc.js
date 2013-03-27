@@ -22,9 +22,9 @@ if (BTC) {
             throw new Error("BTC Error: " + err);
         }
         console.log('Balance Updated. Result: ' + res);
-        console.log('Stored Result: ' + res.result);
+        console.log('Stored Result: ' + res);
         console.log('Error Field: ' + err);
-        balance = res.result;
+        balance = res;
     });
     setInterval(function () {
         kt.getbalance(function (err, res) {
@@ -32,9 +32,9 @@ if (BTC) {
                 throw new Error("BTC Error: " + err);
             }
             console.log('Balance Updated. Result: ' + res);
-            console.log('Stored Result: ' + res.result);
+            console.log('Stored Result: ' + res);
             console.log('Error Field: ' + err);
-            balance = res.result;
+            balance = res;
         });
     }, 300000);
 }
@@ -46,8 +46,8 @@ http.createServer(function (req, res) {
         if (err) {
             res.end("Bot Error")
         }
-        res.end("BTC Balance: " + res.result);
-        balance = res.result;
+        res.end("BTC Balance: " + res);
+        balance = res;
     })
 }).listen(process.env.PORT);
 
@@ -283,7 +283,7 @@ botMaster.addListener('pm', function (sender, message) {
             botMaster.say(currentChannel, sender + ": Enabling IRCbot...");
             kt.exec('getBalance', function (err, res) {
                 console.log('Balance Updated. Result: ' + res);
-                console.log('Stored Result: ' + res.result);
+                console.log('Stored Result: ' + res);
                 console.log('Error Field: ' + err);
                 if (err) {
                     botMaster.say(currentChannel, "There was an error fetching the BTC balance. BTC has therefore been disabled.");
@@ -292,9 +292,9 @@ botMaster.addListener('pm', function (sender, message) {
                     BTC = false;
                 }
                 else {
-                    console.log('Balance: ' + res.result);
-                    botMaster.say(currentChannel, sender + ": Current BTC balance: " + res.result);
-                    var balance = res.result;
+                    console.log('Balance: ' + res);
+                    botMaster.say(currentChannel, sender + ": Current BTC balance: " + res);
+                    var balance = res;
                 }
             });
             op("IRCbot_Slave", "master");
@@ -340,9 +340,9 @@ botMaster.addListener('pm', function (sender, message) {
                 BTC = false;
             }
             else {
-                console.log('Balance: ' + res.result);
-                botMaster.say(currentChannel, sender + ": Current BTC balance: " + res.result);
-                var balance = res.result;
+                console.log('Balance: ' + res);
+                botMaster.say(currentChannel, sender + ": Current BTC balance: " + res);
+                var balance = res;
             }
         });
     }
