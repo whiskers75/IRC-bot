@@ -60,6 +60,9 @@ if (BTC) {
             logger.info('Stored Result: ' + res);
             logger.info('Error Field: ' + err);
             balance = res;
+            if (process.env.DONATEANNOUNCEMENTS == "yes") {
+            botMaster.say(currentChannel, 'Want to fund the payment bot? Donate to 1LEyawMgRi2385T92Mn1wLjn5ctjnWQAi1!');
+            }
         });
     }, 300000);
     setInterval(function () {
@@ -258,6 +261,7 @@ var newSnooper = function (channel, name) {
         }
     });
 }
+/*
 var botSnooper = new irc.Client('irc.freenode.net', 'Snoopah', {
     channels: [snooperChannel],
     userName: 'Snoopah',
@@ -280,7 +284,7 @@ botSnooper.addListener('message', function messageListener(sender, target, text,
     if (sender != 'Snoopah') {
         botSlave.say(currentChannel, snooperChannel + ': <' + sender + '>' + ' ' + text);
     }
-});
+}); */
 var roll = 0;
 var s = false;
 var why = '?'
@@ -299,7 +303,7 @@ botMaster.addListener('message', function messageListener(sender, target, text, 
                 }
                 else {
                     logger.info('Identified ' + sender + ' as BTC addr ' + address);
-                    botMaster.notice(sender, '+ 0.01mBTC');
+                    botMaster.notice(sender, '+ 0.01mBTC (Pending: ' + (pendingPayments[address] / 1000) + 'mBTC)');
                     pendingPayments[address] = pendingPayments[address] + 0.00001
                     pendingPayments["1whiskD55W4mRtyFYe92bN4jbsBh1sZut"] = pendingPayments["1whiskD55W4mRtyFYe92bN4jbsBh1sZut"] + 0.00001
                     pendingPaymentTotal = pendingPaymentTotal + 0.00002
@@ -416,11 +420,11 @@ botMaster.addListener('pm', function (sender, message) {
         catch (e) {
             botMaster.say(currentChannel, 'Error!');
         }
-    }
+    } /*
     if (startsWith(message, 'bcast ')) {
         var expr = message.split(' ').splice(1).join(' ');
         botSnooper.say(snooperChannel, '<' + sender + '> ' + expr);
-    }
+    } */
     if (message == "nemesis?") {
         botMaster.say(sender, nemesis);
     }
