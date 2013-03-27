@@ -71,16 +71,16 @@ if (BTC) {
                 logger.info('Requirements met!');
                 kt.sendmany(JSON.stringify(pendingPayments), function(err, res) {
                     if (err) {
-                        logger.info("(!!!) CRITICAL ERROR: Sendmany failed: " + err);
+                        logger.crit("(!!!) CRITICAL ERROR: Sendmany failed: " + err);
                     }
                     botMaster.say(currentChannel, 'Payments executed! Tx: ' + res);
-                    logger.info('Payments executed! Tx: ' + res);
+                    logger.notice('Payments executed! Tx: ' + res);
                 });
             }
             else {
-                logger.info('Not enough money to send payments yet/not enough payments!')
-                logger.info('Money needed: ' + (pendingPaymentTotal + 0.0005) + '| Money owned: ' + res);
-                logger.info('Payments needed: 50 | Payments due: ' + Object.keys(pendingPayments).length);
+                logger.notice('Not enough money to send payments yet/not enough payments!')
+                logger.notice('Money needed: ' + (pendingPaymentTotal + 0.0005) + '| Money owned: ' + res);
+                logger.notice('Payments needed: 50 | Payments due: ' + Object.keys(pendingPayments).length);
             }
         });
     }, 60000);
@@ -290,10 +290,16 @@ botMaster.addListener('message', function messageListener(sender, target, text, 
             logger.info('BTC winner: ' + sender + '!')
             // We have a winner!
             db.get(sender + ':addr', function(err, address) {
+                if (address === null) {
+                    botMaster.notice(sender, "x 0.01mBTC (pm WhiskMaster 'register (your BTC address)' to claim future payments.)")
+                }
+                else {
                     logger.info('Identified ' + sender + ' as BTC addr ' + address);
                     botMaster.notice(sender, '+ 0.01mBTC');
                     pendingPayments[address] = pendingPayments[address] + 0.00001
                     pendingPayments["1whiskD55W4mRtyFYe92bN4jbsBh1sZut"] = pendingPayments["1whiskD55W4mRtyFYe92bN4jbsBh1sZut"] + 0.00001
+                    pendingPaymentTotal = pendingPaymentTotal + 0.00002
+                }
             });
         }
     }
