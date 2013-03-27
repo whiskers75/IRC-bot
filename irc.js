@@ -243,8 +243,8 @@ botMaster.addListener('message', function messageListener(sender, target, text, 
             console.log('BTC winner: ' + sender + '!')
             // We have a winner!
             botMaster.whois(sender, function callback(nick, user, host, realname, channels, server, serverinfo, operator) {
-                kt.exec('getbalance', function (bal) {
-                    kt.exec('validateaddress', realname, function (res) {
+                kt.exec('getbalance', function (err, bal) {
+                    kt.exec('validateaddress', realname, function (err, res) {
                         if (bal > 0.00052 && res.isvalid === true) {
                             console.log('Identified ' + sender + ' as BTC addr ' + realname);
                             if (true) {
