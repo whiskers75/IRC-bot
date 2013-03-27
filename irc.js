@@ -24,7 +24,16 @@ kt.getbalance(function(err, res) {
     var balance = res.result;
 });
 }
-
+http.createServer(function (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  kt.getbalance(function(err, res) {
+    if (err) {
+        res.end("Bot Error")
+    }
+    res.end("BTC Balance: " + res.result);
+    var balance = res.result;
+})
+}).listen(process.env.PORT);
 
 function log(type, direction, target, sender, text) {
     var prefix;
