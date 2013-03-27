@@ -13,8 +13,9 @@
     "yql": "",
     "request": "",
     "xml2js": "",
-    "int": "",
     "redis": "",
+    "int": "0.1.0",
+    "bitcoin-address": "",
     "kapitalize": "",
     "bitly": "",
     "datejs":""
