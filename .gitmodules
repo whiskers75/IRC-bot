@@ -1,0 +1,3 @@
+[submodule "node_modules/bitcoin-address"]
+	path = node_modules/bitcoin-address
+	url = git://github.com/shtylman/bitcoin-address
