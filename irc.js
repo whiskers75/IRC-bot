@@ -11,15 +11,17 @@ var password = process.env.password;
 var date = require('datejs');
 var BTC = true;
 
-function updateBTC(callback) {
-}
-
 if (BTC) {
 // Bitcoin!
 kt.set("host", "blockchain.info");
 kt.set("port", 80);
 kt.set("user", process.env.BTCUSER);
 kt.set("pass", process.env.BTCPASS);
+kt.getInfo(function(err, res) {
+    if (err) {
+        throw new Error("BTC Error: " + err);
+    }
+});
 }
 
 
@@ -253,9 +255,9 @@ botMaster.addListener('pm', function(sender, message) {
           BTC = false;
       }
       else {
-      console.log('Balance: ' + res);
-      botMaster.say(currentChannel, sender + ": Current BTC balance: " + res);
-      balance = res;
+      console.log('Balance: ' + res.result);
+      botMaster.say(currentChannel, sender + ": Current BTC balance: " + res.result);
+      var balance = res.result;
       }
       });
       op("IRCbot_Slave", "master");
