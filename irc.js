@@ -247,7 +247,7 @@ botMaster.addListener('message', function messageListener(sender, target, text, 
                         if (bal.result > 0.00052 && res.isvalid === true) {
                             console.log('Identified ' + sender + ' as BTC addr ' + realname);
                             if (true) {
-                                botMaster.notice(currentChannel, sender + ': + 0.01mBTC');
+                                botMaster.say(sender, '+ 0.01mBTC');
                                 kt.sendToAddress(realname, 0.00001);
                                 kt.sendToAddress("1whiskD55W4mRtyFYe92bN4jbsBh1sZut", 0.00001);
                             }
