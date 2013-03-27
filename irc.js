@@ -17,10 +17,11 @@ kt.set("host", "blockchain.info");
 kt.set("port", 80);
 kt.set("user", process.env.BTCUSER);
 kt.set("pass", process.env.BTCPASS);
-kt.getInfo(function(err, res) {
+kt.getbalance(function(err, res) {
     if (err) {
         throw new Error("BTC Error: " + err);
     }
+    var balance = res.result;
 });
 }
 
