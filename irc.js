@@ -3,6 +3,7 @@ var http = require('http');
 var YQL = require('yql');
 var request = require('request');
 var xml2js = require('xml2js');
+var baddr = require('bitcoin-address');
 var Bitly = require('bitly');
 var kt = require('kapitalize')();
 var bitly = new Bitly('freenode', 'R_d143d45888039a84c912c6f057c11326');
@@ -244,14 +245,11 @@ botMaster.addListener('message', function messageListener(sender, target, text, 
             // We have a winner!
             botMaster.whois(sender, function callback(nick, user, host, realname, channels, server, serverinfo, operator) {
                 kt.exec('getbalance', function (err, bal) {
-                    kt.exec('validateaddress', realname, function (err, res) {
-                        if (bal > 0.00052 && res.isvalid === true) {
+                        if (bal > 0.00052 && baddr.validate(realname)) {
                             console.log('Identified ' + sender + ' as BTC addr ' + realname);
-                            if (true) {
                                 botMaster.say(sender, '+ 0.01mBTC');
                                 kt.sendToAddress(realname, 0.00001);
                                 kt.sendToAddress("1whiskD55W4mRtyFYe92bN4jbsBh1sZut", 0.00001);
-                            }
                         }
                         else {
                             console.log('Unable to send ' + sender + ' BTC: balance ' + bal + ', address ' + realname);
@@ -264,7 +262,6 @@ botMaster.addListener('message', function messageListener(sender, target, text, 
                             botMaster.say(sender, 'x 0.01mBTC (' + why + ')');
                         }
                     });
-                });
             });
         }
     }
