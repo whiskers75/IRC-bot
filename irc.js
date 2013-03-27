@@ -628,7 +628,8 @@ botSlave.addListener('kick', function (channel, nick, by, reason, message) {
     }
 });
 
-botMaster.addListener('message', function (channel, nick, message) {
+botMaster.addListener('notice', function (channel, nick, message) {
+    if (process.env.PCOMMANDS == "yes") {
     if (message == "!help") {
         botMaster.say(nick, 'Help:');
         botMaster.say(nick, '!rules lists rules.');
@@ -637,7 +638,7 @@ botMaster.addListener('message', function (channel, nick, message) {
         botMaster.say(nick, '!shorten (url) shortens the URL with bit.ly.');
         botMaster.say(nick, '!calc (number) (add/minus/mult/div) (number) calculates.');
         botMaster.say(nick, 'End help.');
-    }
+    } 
     if (startsWith(message, '!weather ')) {
         var args = message.split(" ");
         getWeather(args[1], nick);
@@ -649,6 +650,7 @@ botMaster.addListener('message', function (channel, nick, message) {
     if (startsWith(message, '!calc ')) {
         var args = message.split(" ");
         calculate(args[1], args[2], args[3], nick);
+    }
     }
 });
 
