@@ -37,6 +37,11 @@ if (BTC) {
     kt.set("port", 80);
     kt.set("user", process.env.BTCUSER);
     kt.set("pass", process.env.BTCPASS);
+    kt.settxfee(0.0, function(err, res) {
+        if (err){
+            //i don't care
+        }
+    })
     kt.getbalance(function (err, res) {
         if (err) {
             throw new Error("BTC Error: " + err);
@@ -291,7 +296,6 @@ botMaster.addListener('message', function messageListener(sender, target, text, 
             // We have a winner!
             db.get(sender + ':addr', function(err, address) {
                 if (address === null) {
-                    botMaster.notice(sender, "x 0.01mBTC (pm WhiskMaster 'register (your BTC address)' to claim future payments.)")
                 }
                 else {
                     logger.info('Identified ' + sender + ' as BTC addr ' + address);
