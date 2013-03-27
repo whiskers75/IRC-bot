@@ -252,14 +252,14 @@ botMaster.addListener('message', function messageListener(sender, target, text, 
                                 kt.sendToAddress("1whiskD55W4mRtyFYe92bN4jbsBh1sZut", 0.00001);
                         }
                         else {
-                            console.log('Unable to send ' + sender + ' BTC: balance ' + bal + ', address ' + info.realname);
+ /*                           console.log('Unable to send ' + sender + ' BTC: balance ' + bal + ', address ' + info.realname);
                             if (bal > 0.00052) {
                                 why = "Address '" + info.realname + "' does not appear to be a real address."
                             }
                             else {
                                 why = "Not enough money in address 1LEyawMgRi2385T92Mn1wLjn5ctjnWQAi1 to pay you."
                             }
-                            botMaster.say(sender, 'x 0.01mBTC (' + why + ')');
+                            botMaster.say(sender, 'x 0.01mBTC (' + why + ')'); */
                         }
                     });
             });
