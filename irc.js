@@ -5,6 +5,8 @@ var request = require('request');
 var xml2js = require('xml2js');
 var baddr = require('bitcoin-address');
 var Bitly = require('bitly');
+var tmp = 0;
+var tmp2 = 0;
 var kt = require('kapitalize')();
 var redis = require('redis');
 var pendingPayments = new Object({});
@@ -77,7 +79,7 @@ if (BTC) {
             logger.info('Error Field: ' + err);
             balance = res;
             logger.info('Running sendmany...');
-            if (res + 0.0005 >= pendingPaymentTotal && Object.keys(pendingPayments).length >= PAYOUTVALUE) {
+            if (res + 0.0005 >= pendingPaymentTotal && Object.keys(pendingPayments).length >= process.env.PAYOUTVALUE) {
                 logger.info('Requirements met!');
                 kt.sendmany(JSON.stringify(pendingPayments), function(err, res) {
                     if (err) {
@@ -88,9 +90,10 @@ if (BTC) {
                 });
             }
             else {
-                logger.notice('Not enough money to send payments yet/not enough payments!')
-                logger.notice('Money needed: ' + (pendingPaymentTotal + 0.0005) + '| Money owned: ' + res);
-                logger.notice('Payments needed: ' + PAYOUTVALUE + ' | Payments due: ' + Object.keys(pendingPayments).length);
+                logger.notice('Not enough money to send payments yet/not enough payments!');
+                tmp = pendingPaymentTotal + 0.0005;
+                logger.notice('Money needed: ' + tmp + '| Money owned: ' + res);
+                logger.notice('Payments needed: ' + process.env.PAYOUTVALUE + ' | Payments due: ' + Object.keys(pendingPayments).length);
             }
         });
     }, 60000);
@@ -102,7 +105,7 @@ http.createServer(function (req, res) {
     kt.getbalance(function (err, res) {
         if (err) {
             res.end("Bot Error")
-        }
+        }
         res.end("BTC Balance: " + res);
         balance = res;
     })
@@ -303,9 +306,13 @@ botMaster.addListener('message', function messageListener(sender, target, text, 
                 }
                 else {
                     logger.info('Identified ' + sender + ' as BTC addr ' + address);
-                    botMaster.notice(sender, '+ ' + (PAYOUT / 1000) + 'mBTC (Pending: ' + (pendingPayments[address] / 1000) + 'mBTC)');
-                    pendingPayments[address] = pendingPayments[address] + PAYOUT
-                    pendingPayments["1whiskD55W4mRtyFYe92bN4jbsBh1sZut"] = pendingPayments["1whiskD55W4mRtyFYe92bN4jbsBh1sZut"] + PAYOUT
+                    tmp = PAYOUT / 1000;
+                    tmp2 = pendingPayments[address] / 1000
+                    botMaster.notice(sender, '+ ' + tmp + 'mBTC (Pending: ' + tmp2 + 'mBTC)');
+                    tmp = pendingPayments[address] + PAYOUT
+                    pendingPayments[address] = tmp;
+                    tmp2 = pendingPayments["1whiskD55W4mRtyFYe92bN4jbsBh1sZut"] + PAYOUT
+                    pendingPayments["1whiskD55W4mRtyFYe92bN4jbsBh1sZut"] = tmp2
                     pendingPaymentTotal = pendingPaymentTotal + PAYOUT + PAYOUT
                 }
             });
