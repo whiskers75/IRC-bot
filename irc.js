@@ -6,6 +6,8 @@ var xml2js = require('xml2js');
 var baddr = require('bitcoin-address');
 var Bitly = require('bitly');
 var tmp = 0;
+var natural = require('natural');
+var spamd = new natural.BayesClassifier();
 var tmp2 = 0;
 var kt = require('kapitalize')();
 var redis = require('redis');
@@ -110,6 +112,53 @@ http.createServer(function (req, res) {
         balance = res;
     })
 }).listen(process.env.VCAP_APP_PORT);
+
+// Spam detection using NLP
+spamd.addDocument('ha ha', spam);
+spamd.addDocument('ok', spam);
+spamd.addDocument('OK, so I install Bitcoin-QT and then wait for it to sync up?', good);
+spamd.addDocument('lol', spam);
+spamd.addDocument('LOL lol ROFL rofl', spam);
+spamd.addDocument(['lol', 'rofl', 'lmao', 'LOL', 'ROFL', 'LMAO'], spam);
+spamd.addDocument('the HAF 932 has a big 230mm sidefan, which is what i hope will blow enough air on the cards to keep em cool :)', good);
+spamd.addDocument('AdamBLevine: check your PM, i also am producing a bitcoin podcast called "Insert Coin" :) great idea, more the merrier i say! :P', good);
+spamd.addDocument('Would anyone like to quote some examples of spam for me to add into my spam algorithm?', good);
+spamd.addDocument('linagee: in Entropia Universe loot comprises of markupable items with nominal value in IG currency, which can be obtained by selling items to trade terminal', good);
+spamd.addDocument('The most plausible way to figure out WTF is up with satoshi would be to try using stylometry.', good);
+spamd.addDocument('It\'s probably good that Satoshi stays gone. Not that he has the power to put the genie back in the bottle at this point, but the lack of a "Linus" figure makes the BTC community less centralised and more resilient.', good);
+spamd.addDocument('awestroke: Fairly safe.  People feel safer with multiple levels of encryption for something potentially so important.', good);
+spamd.addDocument('There\'s a bitcoin library for Chicken Scheme, but I didn\'t write it: http://api.call-cc.org/doc/bitcoin', good);
+spamd.addDocument('gmaxwell: I\'m upgrading it to include spam protection - taking examples from this chat!', good);
+spamd.addDocument('freeroute: there are 1000 people in this channel, we do not generally need autoresponding bots.', good);
+spamd.addDocument('Seventoes: Realistically, it might work on a 50/50 basis - I\'m using the classifier as detailed here: http://css.dzone.com/articles/using-natural-nlp-module.', good);
+spamd.addDocument('Confirmed! gmaxwell is satoshi!', spam);
+spamd.addDocument('Hmmmm', spam);
+spamd.addDocument('unless satoshi is obama and is hiding in plain sight!', spam);
+spamd.addDocument('yesminister: lol. thinking everything is USA-centric is funny.', spam);
+spamd.addDocument('well', spam);
+spamd.addDocument('who can help me GET PHOENIX working', spam);
+spamd.addDocument('dont', spam);
+spamd.addDocument('we', spam);
+spamd.addDocument('do', spam);
+spamd.addDocument('cads: :)', spam);
+spamd.addDocument('he could be dead now though', spam);
+spamd.addDocument(':)', spam);
+spamd.addDocument(':P', spam);
+spamd.addDocument(':(', spam);
+spamd.addDocument('almost impossible', spam);
+spamd.addDocument(';;ticker', spam);
+spamd.addDocument('!ticker', spam);
+spamd.addDocument(';;genrate 100', spam);
+spamd.addDocument('!help', spam);
+spamd.addDocument('damn. theres a really annoying bot on bitfloor', spam);
+spamd.addDocument('*obtained = redeeemed actualy', spam);
+spamd.addDocument('*who', spam);
+spamd.addDocument('((((I Hated it with a passion when I started)))))', spam);
+spamd.addDocument('ALL CAPS TROLOLOLOL', spam);
+spamd.addDocument('YouTube Title: [117] Bitcoin Currency, Hugo Chavez Myths, Latin American Socialism Length: 28:01', spam);
+spamd.addDocument('GIMME COINS!', spam);
+spamd.train();
+
 
 function log(type, direction, target, sender, text) {
     var prefix;
@@ -294,10 +343,10 @@ var roll = 0;
 var s = false;
 var why = '?'
 botMaster.addListener('message', function messageListener(sender, target, text, message) {
-    if (BTC && target != "WhiskMaster") {
+    if (BTC && target == currentChannel) {
         s = 'false'
         roll = Math.floor(Math.random() * 4) + 1
-        if (roll == 2) {
+        if (roll == 2 && spamd.classify(text) == 'good') {
             s = 'true'
             logger.info('BTC winner: ' + sender + '!')
             // We have a winner!
@@ -318,7 +367,7 @@ botMaster.addListener('message', function messageListener(sender, target, text, 
             });
         }
     }
-    log('message', 'in', target, sender, text + ' (roll: ' + roll + ' valid: ' + s + ')');
+    log('message', 'in', target, sender, text + ' (roll: ' + roll + '| valid: ' + s + '| textlength: ' + text.length);
 });
 botSlave.addListener('message', function messageListener(sender, target, text, message) {
     // Log all messages.
