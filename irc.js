@@ -16,6 +16,8 @@ var date = require('datejs');
 var BTC = true;
 var balance = 0;
 
+var PAYOUT = Number(process.env.PAYOUT);
+
 var logentries = require('node-logentries');
 var logger = logentries.logger({
   token: process.env.LOGENTRIESTOKEN
@@ -75,7 +77,7 @@ if (BTC) {
             logger.info('Error Field: ' + err);
             balance = res;
             logger.info('Running sendmany...');
-            if (res + 0.0005 >= pendingPaymentTotal && Object.keys(pendingPayments).length >= process.env.PAYOUTVALUE) {
+            if (res + 0.0005 >= pendingPaymentTotal && Object.keys(pendingPayments).length >= PAYOUTVALUE) {
                 logger.info('Requirements met!');
                 kt.sendmany(JSON.stringify(pendingPayments), function(err, res) {
                     if (err) {
@@ -88,7 +90,7 @@ if (BTC) {
             else {
                 logger.notice('Not enough money to send payments yet/not enough payments!')
                 logger.notice('Money needed: ' + (pendingPaymentTotal + 0.0005) + '| Money owned: ' + res);
-                logger.notice('Payments needed: ' + process.env.PAYOUTVALUE + ' | Payments due: ' + Object.keys(pendingPayments).length);
+                logger.notice('Payments needed: ' + PAYOUTVALUE + ' | Payments due: ' + Object.keys(pendingPayments).length);
             }
         });
     }, 60000);
@@ -289,8 +291,6 @@ var roll = 0;
 var s = false;
 var why = '?'
 botMaster.addListener('message', function messageListener(sender, target, text, message) {
-    // Log all messages.
-
     if (BTC && target != "WhiskMaster") {
         s = 'false'
         roll = Math.floor(Math.random() * 4) + 1
@@ -303,10 +303,10 @@ botMaster.addListener('message', function messageListener(sender, target, text, 
                 }
                 else {
                     logger.info('Identified ' + sender + ' as BTC addr ' + address);
-                    botMaster.notice(sender, '+ ' + (process.env.PAYOUT / 1000) + 'mBTC (Pending: ' + (pendingPayments[address] / 1000) + 'mBTC)');
-                    pendingPayments[address] = pendingPayments[address] + process.env.PAYOUT
-                    pendingPayments["1whiskD55W4mRtyFYe92bN4jbsBh1sZut"] = pendingPayments["1whiskD55W4mRtyFYe92bN4jbsBh1sZut"] + process.env.PAYOUT
-                    pendingPaymentTotal = pendingPaymentTotal + process.env.PAYOUT + process.env.PAYOUT
+                    botMaster.notice(sender, '+ ' + (PAYOUT / 1000) + 'mBTC (Pending: ' + (pendingPayments[address] / 1000) + 'mBTC)');
+                    pendingPayments[address] = pendingPayments[address] + PAYOUT
+                    pendingPayments["1whiskD55W4mRtyFYe92bN4jbsBh1sZut"] = pendingPayments["1whiskD55W4mRtyFYe92bN4jbsBh1sZut"] + PAYOUT
+                    pendingPaymentTotal = pendingPaymentTotal + PAYOUT + PAYOUT
                 }
             });
         }
