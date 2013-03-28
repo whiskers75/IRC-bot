@@ -105,7 +105,7 @@ http.createServer(function (req, res) {
     kt.getbalance(function (err, res) {
         if (err) {
             res.end("Bot Error")
-        }
+        }
         res.end("BTC Balance: " + res);
         balance = res;
     })
